@@ -1,0 +1,42 @@
+# Web 框架
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+sse-starlette>=2.1
+python-multipart>=0.0.9
+
+# 配置与校验
+pydantic>=2.7,<3.0
+pydantic-settings>=2.3
+python-dotenv>=1.0
+
+# 数据库
+sqlalchemy>=2.0,<3.0
+asyncpg>=0.29
+alembic>=1.13
+pgvector>=0.3
+
+# 缓存
+redis>=5.0
+
+# LLM / Agent
+openai>=1.40
+langgraph>=0.2
+langchain-core>=0.3
+httpx>=0.27
+tenacity>=8.4
+
+# 安全
+python-jose[cryptography]>=3.3
+passlib[bcrypt]>=1.7
+bcrypt==4.0.1
+
+# 可观测性
+structlog>=24.1
+
+# 种子数据导入 / 向量
+openpyxl>=3.1
+numpy>=1.26
+
+# 测试
+pytest>=8.0
+pytest-asyncio>=0.23

@@ -1,0 +1,73 @@
+# 手机电商智能客服 Agent —— 本地可复现部署
+# 用法：cp .env.example .env 后执行 docker compose up -d --build
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: pca-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pca}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pca_password}
+      POSTGRES_DB: ${POSTGRES_DB:-phone_commerce}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pca} -d ${POSTGRES_DB:-phone_commerce}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: pca-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  api:
+    build: ./backend
+    container_name: pca-api
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-true}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pca}:${POSTGRES_PASSWORD:-pca_password}@postgres:5432/${POSTGRES_DB:-phone_commerce}
+      REDIS_URL: redis://redis:6379/0
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-chat}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-mock}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build: ./frontend
+    container_name: pca-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
