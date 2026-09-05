@@ -12,13 +12,13 @@ class Product(Base):
 
     __tablename__ = "products"
 
-    product_id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    brand: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
-    model: Mapped[str] = mapped_column(String(128), nullable=False)
-    series: Mapped[str | None] = mapped_column(String(128))
-    release_date: Mapped[str | None] = mapped_column(String(16))
-    official_url: Mapped[str | None] = mapped_column(String(512))
-    source_date: Mapped[str | None] = mapped_column(String(16))
+    product_id: Mapped[str] = mapped_column(String(64), primary_key=True)  # 机型级 SPU 业务 ID。
+    brand: Mapped[str] = mapped_column(String(64), index=True, nullable=False)  # 品牌名称。
+    model: Mapped[str] = mapped_column(String(128), nullable=False)  # 对外型号名称。
+    series: Mapped[str | None] = mapped_column(String(128))  # 产品系列。
+    release_date: Mapped[str | None] = mapped_column(String(16))  # 上市日期，种子数据为文本日期。
+    official_url: Mapped[str | None] = mapped_column(String(512))  # 品牌官网来源链接。
+    source_date: Mapped[str | None] = mapped_column(String(16))  # 参数采集日期。
 
 
 class ProductVariant(Base):
@@ -26,13 +26,13 @@ class ProductVariant(Base):
 
     __tablename__ = "product_variants"
 
-    variant_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    variant_id: Mapped[str] = mapped_column(String(64), primary_key=True)  # 容量/内存组合级 SKU 规格 ID。
     product_id: Mapped[str] = mapped_column(
         String(64), ForeignKey("products.product_id", ondelete="CASCADE"), index=True, nullable=False
     )
-    ram: Mapped[str | None] = mapped_column(String(64))
-    storage: Mapped[str | None] = mapped_column(String(32))
-    color: Mapped[str | None] = mapped_column(String(255))
+    ram: Mapped[str | None] = mapped_column(String(64))  # 运行内存规格。
+    storage: Mapped[str | None] = mapped_column(String(32))  # 机身存储规格。
+    color: Mapped[str | None] = mapped_column(String(255))  # 可选颜色集合。
     processor: Mapped[str | None] = mapped_column(String(128))
     screen_size: Mapped[str | None] = mapped_column(String(64))
     screen_type: Mapped[str | None] = mapped_column(String(255))
@@ -67,8 +67,8 @@ class Price(Base):
         String(64), ForeignKey("products.product_id", ondelete="CASCADE"), index=True, nullable=False
     )
     version: Mapped[str | None] = mapped_column(String(32))
-    official_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    currency: Mapped[str] = mapped_column(String(8), default="CNY")
+    official_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 官方指导价。
+    currency: Mapped[str] = mapped_column(String(8), default="CNY")  # ISO 货币代码。
     price_type: Mapped[str | None] = mapped_column(String(64))
     source_url: Mapped[str | None] = mapped_column(String(512))
     effective_date: Mapped[str | None] = mapped_column(String(16))
@@ -87,7 +87,7 @@ class Source(Base):
     fetch_date: Mapped[str | None] = mapped_column(String(16))
     is_official: Mapped[str | None] = mapped_column(String(8))
     applicable_version: Mapped[str | None] = mapped_column(String(64))
-    source_priority: Mapped[int | None] = mapped_column(Integer)
+    source_priority: Mapped[int | None] = mapped_column(Integer)  # 来源冲突时的可信优先级。
     region: Mapped[str | None] = mapped_column(String(64))
     data_status: Mapped[str | None] = mapped_column(String(64))
     conflict_note: Mapped[str | None] = mapped_column(Text)
@@ -105,16 +105,16 @@ class StoreProduct(Base):
     product_id: Mapped[str] = mapped_column(
         String(64), ForeignKey("products.product_id", ondelete="CASCADE"), index=True, nullable=False
     )
-    sku: Mapped[str | None] = mapped_column(String(64))
-    listing_status: Mapped[str | None] = mapped_column(String(32))
-    original_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    promotion_price: Mapped[float | None] = mapped_column(Numeric(12, 2))
+    sku: Mapped[str | None] = mapped_column(String(64))  # 门店实际销售 SKU 编码。
+    listing_status: Mapped[str | None] = mapped_column(String(32))  # 上架、下架等销售状态。
+    original_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 门店日常原价，单位元。
+    promotion_price: Mapped[float | None] = mapped_column(Numeric(12, 2))  # 活动期价格，单位元。
     price_type: Mapped[str | None] = mapped_column(String(32))
     promotion_id: Mapped[str | None] = mapped_column(String(64))
     price_effective_from: Mapped[str | None] = mapped_column(String(16))
     price_effective_to: Mapped[str | None] = mapped_column(String(16))
-    cost_price: Mapped[float | None] = mapped_column(Numeric(12, 2))
-    margin_pct: Mapped[float | None] = mapped_column(Numeric(6, 2))
+    cost_price: Mapped[float | None] = mapped_column(Numeric(12, 2))  # 内部成本价，不应暴露给消费者。
+    margin_pct: Mapped[float | None] = mapped_column(Numeric(6, 2))  # 毛利率百分比，内部字段。
     on_shelf_date: Mapped[str | None] = mapped_column(String(16))
     category: Mapped[str | None] = mapped_column(String(64))
 
@@ -129,10 +129,10 @@ class Inventory(Base):
         String(64), ForeignKey("product_variants.variant_id", ondelete="CASCADE"), index=True, nullable=False
     )
     warehouse: Mapped[str | None] = mapped_column(String(128))
-    quantity: Mapped[int] = mapped_column(Integer, default=0)
-    available_qty: Mapped[int] = mapped_column(Integer, default=0)
-    reserved_qty: Mapped[int] = mapped_column(Integer, default=0)
-    safety_stock: Mapped[int] = mapped_column(Integer, default=0)
+    quantity: Mapped[int] = mapped_column(Integer, default=0)  # 仓库账面总库存。
+    available_qty: Mapped[int] = mapped_column(Integer, default=0)  # 扣除锁定量后可售数量。
+    reserved_qty: Mapped[int] = mapped_column(Integer, default=0)  # 已被订单锁定但未出库数量。
+    safety_stock: Mapped[int] = mapped_column(Integer, default=0)  # 不建议销售的安全库存阈值。
     last_updated: Mapped[str | None] = mapped_column(String(32))
     status: Mapped[str | None] = mapped_column(String(32))
 
@@ -147,8 +147,8 @@ class Promotion(Base):
     name: Mapped[str | None] = mapped_column(String(128))
     description: Mapped[str | None] = mapped_column(Text)
     discount_type: Mapped[str | None] = mapped_column(String(64))
-    discount_value: Mapped[float | None] = mapped_column(Numeric(12, 2))
-    min_amount: Mapped[float | None] = mapped_column(Numeric(12, 2))
+    discount_value: Mapped[float | None] = mapped_column(Numeric(12, 2))  # 折扣比例或减免金额，由 discount_type 解释。
+    min_amount: Mapped[float | None] = mapped_column(Numeric(12, 2))  # 活动最低订单金额门槛。
     applicable_products: Mapped[str | None] = mapped_column(String(255))
     start_date: Mapped[str | None] = mapped_column(String(16))
     end_date: Mapped[str | None] = mapped_column(String(16))

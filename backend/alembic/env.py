@@ -27,6 +27,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+    """在无数据库连接模式下生成包含字面量参数的迁移 SQL。"""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -39,12 +40,14 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
+    """使用同步连接配置 Alembic 上下文并执行事务内迁移。"""
     context.configure(connection=connection, target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()
 
 
 async def run_async_migrations() -> None:
+    """创建异步引擎，并桥接到 Alembic 所需的同步迁移函数。"""
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -56,6 +59,7 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
+    """从同步 Alembic 入口启动异步在线迁移流程。"""
     asyncio.run(run_async_migrations())
 
 

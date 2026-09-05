@@ -13,6 +13,7 @@ from app.core.tools.registry import ToolRegistry
 
 @lru_cache
 def build_registry() -> ToolRegistry:
+    """构建并缓存包含全部 14 个业务工具的注册表。"""
     registry = ToolRegistry()
     registry.register_many(build_product_tools())      # 商品 3
     registry.register_many(build_knowledge_tools())    # 知识 1

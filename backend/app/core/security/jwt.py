@@ -9,6 +9,7 @@ from app.config import settings
 
 
 def create_access_token(subject: str, role: str, expires_minutes: int | None = None) -> str:
+    """签发包含用户 ID、角色和过期时间的 JWT 访问令牌。"""
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=expires_minutes or settings.access_token_expire_minutes
     )

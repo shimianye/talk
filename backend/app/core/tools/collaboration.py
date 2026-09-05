@@ -8,6 +8,7 @@ from app.models import Conversation
 
 
 async def _transfer_to_human(ctx: ToolContext, reason: str) -> ToolResult:
+    """返回人工交接所需的原因、会话和用户标识。"""
     # 转人工由上层节点置位 handoff_required 并进入人工队列；这里返回交接信息
     return ToolResult(
         success=True,
@@ -21,6 +22,7 @@ async def _transfer_to_human(ctx: ToolContext, reason: str) -> ToolResult:
 
 
 async def _request_user_confirmation(ctx: ToolContext, question: str) -> ToolResult:
+    """生成需要暂停 Agent 执行的人工确认结果。"""
     # HITL：暂停执行，等待用户确认后恢复（写操作需确认，设计文档第 6 章）
     return ToolResult(
         success=True,
@@ -30,6 +32,7 @@ async def _request_user_confirmation(ctx: ToolContext, question: str) -> ToolRes
 
 async def _save_conversation_summary(ctx: ToolContext, summary: str,
                                      conversation_id: str | None = None) -> ToolResult:
+    """将客服整理的摘要保存到指定或当前会话。"""
     cid = conversation_id or ctx.session_id
     if not cid:
         return ToolResult(success=False, error="缺少会话 ID", error_code="MISSING_PARAM")
@@ -44,6 +47,7 @@ async def _save_conversation_summary(ctx: ToolContext, summary: str,
 
 
 def build_collaboration_tools() -> list[Tool]:
+    """构建转人工、用户确认和会话摘要三个协作工具。"""
     return [
         Tool(
             name="transfer_to_human",

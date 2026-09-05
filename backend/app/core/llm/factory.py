@@ -11,6 +11,7 @@ from app.core.llm.mock import MockLLMClient
 
 @lru_cache
 def get_llm_client() -> LLMClient:
+    """按配置返回缓存的 DeepSeek 客户端，无有效密钥时降级为 Mock。"""
     if settings.llm_provider == "deepseek" and settings.deepseek_api_key:
         return DeepSeekClient(
             api_key=settings.deepseek_api_key,

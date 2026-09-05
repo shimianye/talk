@@ -20,12 +20,14 @@ from app.models import (
 
 
 def _assert_owner(ctx: ToolContext, order: Order) -> None:
+    """阻止消费者读取不属于自己的订单；员工角色可按权限处理。"""
     if ctx.role == "consumer" and order.user_id != ctx.user_id:
         raise ToolExecutionError("无权访问该订单")
 
 
 async def _resolve_variant_ids(ctx: ToolContext, variant_id: str | None,
                                product_id: str | None, query: str | None) -> list[str]:
+    """将 SKU ID、SPU ID 或商品关键词统一解析为去重的 SKU ID 列表。"""
     ids: list[str] = []
     if variant_id:
         ids.append(variant_id)
@@ -56,6 +58,7 @@ async def _resolve_variant_ids(ctx: ToolContext, variant_id: str | None,
 
 async def _query_price(ctx: ToolContext, variant_id: str | None = None,
                        product_id: str | None = None, query: str | None = None) -> ToolResult:
+    """查询已上架 SKU 的当前售价和关联促销记录。"""
     ids = await _resolve_variant_ids(ctx, variant_id, product_id, query)
     if not ids:
         return ToolResult(success=False, error="未定位到商品", error_code="NOT_FOUND")
@@ -77,6 +80,7 @@ async def _query_price(ctx: ToolContext, variant_id: str | None = None,
 
 async def _query_inventory(ctx: ToolContext, variant_id: str | None = None,
                            product_id: str | None = None, query: str | None = None) -> ToolResult:
+    """查询 SKU 在各仓库的可售库存并计算总可用量。"""
     ids = await _resolve_variant_ids(ctx, variant_id, product_id, query)
     if not ids:
         return ToolResult(success=False, error="未定位到商品", error_code="NOT_FOUND")
@@ -91,6 +95,7 @@ async def _query_inventory(ctx: ToolContext, variant_id: str | None = None,
 
 
 async def _query_order(ctx: ToolContext, order_id: str) -> ToolResult:
+    """在校验资源归属后返回订单主表信息。"""
     order = (await ctx.db.execute(
         select(Order).where(Order.order_id == order_id)
     )).scalar_one_or_none()
@@ -101,6 +106,7 @@ async def _query_order(ctx: ToolContext, order_id: str) -> ToolResult:
 
 
 async def _query_logistics(ctx: ToolContext, order_id: str) -> ToolResult:
+    """在校验订单归属后返回关联物流包裹。"""
     order = (await ctx.db.execute(
         select(Order).where(Order.order_id == order_id)
     )).scalar_one_or_none()
@@ -114,6 +120,7 @@ async def _query_logistics(ctx: ToolContext, order_id: str) -> ToolResult:
 
 
 def build_business_tools() -> list[Tool]:
+    """构建价格、库存、订单和物流四个实时业务查询工具。"""
     return [
         Tool(
             name="query_price",

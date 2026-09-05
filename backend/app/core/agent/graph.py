@@ -10,6 +10,7 @@ from app.core.agent.state import AgentState
 
 
 def route_after_load(state: AgentState) -> str:
+    """决定加载上下文后是恢复待确认工具，还是进入输入安全检查。"""
     # 确认恢复：直接进入工具执行，跳过 LLM 重新决策
     if state.get("confirmation_granted") and state.get("pending_tool_call"):
         return "tool_execution"
@@ -17,10 +18,12 @@ def route_after_load(state: AgentState) -> str:
 
 
 def route_after_decision(state: AgentState) -> str:
+    """根据 LLM 是否生成工具调用选择执行工具或直接输出答案。"""
     return "tool_call" if state.get("tool_calls") else "final_answer"
 
 
 def route_after_tool_execution(state: AgentState) -> str:
+    """根据工具执行状态路由到转人工、澄清或结果校验节点。"""
     if state.get("handoff_required"):
         return "handoff"
     if state.get("pending_confirmation"):
@@ -29,6 +32,7 @@ def route_after_tool_execution(state: AgentState) -> str:
 
 
 def build_graph():
+    """组装并编译一轮客服 Agent 的 LangGraph 状态图。"""
     g = StateGraph(AgentState)
 
     g.add_node("load_session_context", nodes.load_session_context)
@@ -83,7 +87,20 @@ async def run_turn(
     confirmation_granted: bool = False,
     pending_tool_call: dict[str, Any] | None = None,
 ) -> AgentState:
-    """运行一轮 Agent，返回最终状态（含 final_answer / pending_confirmation / handoff_required）。"""
+    """运行一轮 Agent 并返回包含回答、确认和转人工状态的最终快照。
+
+    Args:
+        messages: OpenAI 消息格式的系统提示词和历史对话。
+        user_id: 当前用户业务 ID，用于工具层数据隔离。
+        role: 当前用户 RBAC 角色，决定可见工具集合。
+        session_id: 多轮会话 ID。
+        db: 请求作用域数据库会话；离线测试允许为空。
+        confirmation_granted: 用户是否确认了上一轮挂起的写操作。
+        pending_tool_call: 上一轮持久化的待确认工具调用。
+
+    Returns:
+        LangGraph 最终状态，包含 ``final_answer``、工具结果和安全标记。
+    """
     state: AgentState = {
         "user_id": user_id,
         "role": role,

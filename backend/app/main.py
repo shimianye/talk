@@ -34,6 +34,7 @@ app.include_router(eval.router, prefix=prefix)
 
 @app.get("/")
 def root() -> dict:
+    """返回服务名称、版本、环境和基础运行状态。"""
     return {
         "name": settings.app_name,
         "version": settings.app_version,

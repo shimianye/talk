@@ -22,6 +22,7 @@ _CLOSED_STATUSES = {"已取消", "退款中", "已退款"}
 
 
 async def _get_owned_order(ctx: ToolContext, order_id: str) -> Order:
+    """加载订单并确保消费者只能操作本人资源。"""
     order = (await ctx.db.execute(
         select(Order).where(Order.order_id == order_id)
     )).scalar_one_or_none()
@@ -33,6 +34,7 @@ async def _get_owned_order(ctx: ToolContext, order_id: str) -> Order:
 
 
 async def _check_after_sales_eligibility(ctx: ToolContext, order_id: str) -> ToolResult:
+    """依据订单状态和签收天数判断是否处于售后时效。"""
     order = await _get_owned_order(ctx, order_id)
 
     if order.order_status in _CLOSED_STATUSES:
@@ -66,6 +68,7 @@ async def _create_after_sales_case(
     sub_type: str | None = None,
     idempotency_key: str | None = None,
 ) -> ToolResult:
+    """创建售后工单，并使用用户级 Redis 幂等键防止重复提交。"""
     order = await _get_owned_order(ctx, order_id)
 
     # 幂等：相同幂等键不重复建单（Redis 幂等键，设计文档第 4 章）
@@ -106,6 +109,7 @@ async def _create_after_sales_case(
 
 async def _get_after_sales_case(ctx: ToolContext, case_id: str | None = None,
                                 order_id: str | None = None) -> ToolResult:
+    """按售后单号或订单号查询工单，并对消费者追加归属过滤。"""
     stmt = select(AfterSalesCase)
     if case_id:
         stmt = stmt.where(AfterSalesCase.case_id == case_id)
@@ -122,6 +126,7 @@ async def _get_after_sales_case(ctx: ToolContext, case_id: str | None = None,
 
 
 def build_after_sales_tools() -> list[Tool]:
+    """构建售后资格检查、建单和进度查询工具。"""
     return [
         Tool(
             name="check_after_sales_eligibility",

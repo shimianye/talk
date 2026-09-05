@@ -12,7 +12,7 @@ class Order(Base):
 
     __tablename__ = "orders"
 
-    order_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    order_id: Mapped[str] = mapped_column(String(64), primary_key=True)  # 对外订单号。
     user_id: Mapped[str] = mapped_column(
         String(64), ForeignKey("users.user_id"), index=True, nullable=False
     )
@@ -20,12 +20,12 @@ class Order(Base):
     variant_id: Mapped[str | None] = mapped_column(String(64))
     product_name: Mapped[str | None] = mapped_column(String(128))
     quantity: Mapped[int] = mapped_column(Integer, default=1)
-    unit_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    total_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    coupon_discount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
-    final_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    unit_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 下单时商品单价。
+    total_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 优惠前商品总额。
+    coupon_discount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)  # 优惠券减免金额。
+    final_amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 用户实付金额。
     payment_method: Mapped[str | None] = mapped_column(String(64))
-    order_status: Mapped[str] = mapped_column(String(32), index=True, nullable=False)
+    order_status: Mapped[str] = mapped_column(String(32), index=True, nullable=False)  # 待支付、已发货、已完成等状态。
     create_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     pay_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ship_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -48,7 +48,7 @@ class OrderItem(Base):
     product_name: Mapped[str | None] = mapped_column(String(128))
     quantity: Mapped[int] = mapped_column(Integer, default=1)
     unit_price: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    subtotal: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    subtotal: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)  # 明细单价乘数量。
 
 
 class LogisticsPackage(Base):
@@ -64,7 +64,7 @@ class LogisticsPackage(Base):
     package_count: Mapped[int | None] = mapped_column(Integer)
     is_split_shipment: Mapped[str | None] = mapped_column(String(8))
     carrier: Mapped[str | None] = mapped_column(String(64))
-    tracking_number: Mapped[str | None] = mapped_column(String(64))
+    tracking_number: Mapped[str | None] = mapped_column(String(64))  # 承运商运单号。
     current_status: Mapped[str | None] = mapped_column(String(64))
     current_location: Mapped[str | None] = mapped_column(String(128))
     estimated_delivery: Mapped[str | None] = mapped_column(String(16))
@@ -103,5 +103,5 @@ class AfterSalesCase(Base):
     create_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     resolve_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     resolution: Mapped[str | None] = mapped_column(Text)
-    compensation_amount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    compensation_amount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)  # 审批后的补偿金额，单位元。
     handler: Mapped[str | None] = mapped_column(String(64))

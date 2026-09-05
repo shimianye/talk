@@ -7,6 +7,7 @@ from typing import Any
 
 
 def _jsonify(value: Any) -> Any:
+    """将日期和 Decimal 等数据库值转换为 JSON 原生类型。"""
     if isinstance(value, (datetime, date)):
         return value.isoformat()
     if isinstance(value, Decimal):

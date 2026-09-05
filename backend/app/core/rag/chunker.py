@@ -7,7 +7,15 @@ import re
 def chunk_text(text: str, chunk_size: int = 500, overlap: int = 60) -> list[str]:
     """将长文本切分为带重叠的片段。
 
-    优先按段落（双换行）聚合，段落过长时按句子切，最终按字符兜底。
+    优先按段落（双换行）聚合，段落过长时按句子切。
+
+    Args:
+        text: 原始 Markdown 或纯文本内容。
+        chunk_size: 单个片段允许的近似最大字符数。
+        overlap: 超长段落切分时相邻片段保留的字符数。
+
+    Returns:
+        去除空片段后的文本列表，顺序与原文一致。
     """
     text = (text or "").strip()
     if not text:
@@ -39,6 +47,7 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 60) -> list[str]
 
 
 def _split_long(text: str, chunk_size: int, overlap: int) -> list[str]:
+    """按句末标点拆分超长段落，并在相邻片段间保留上下文重叠。"""
     sentences = re.split(r"(?<=[。！？.!?])", text)
     pieces: list[str] = []
     cur = ""

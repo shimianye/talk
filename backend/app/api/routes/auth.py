@@ -17,12 +17,15 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 class LoginRequest(BaseModel):
-    username: str
-    password: str
+    """用户名密码登录请求。"""
+
+    username: str  # 用户登录名，不等同于业务 user_id。
+    password: str  # 仅用于本次校验的明文密码，不持久化。
 
 
 @router.post("/login")
 async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)) -> dict:
+    """校验账号密码并签发携带用户角色的 Bearer JWT。"""
     user = (
         await db.execute(
             select(User)
@@ -46,6 +49,7 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)) -> dict:
 
 @router.get("/me")
 async def me(user: User = Depends(get_current_user)) -> dict:
+    """返回当前 JWT 对应的用户身份和全部角色。"""
     return {
         "user_id": user.user_id,
         "display_name": user.display_name,

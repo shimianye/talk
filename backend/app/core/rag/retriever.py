@@ -37,6 +37,7 @@ class BM25:
     """轻量 BM25 实现（Okapi BM25）。"""
 
     def __init__(self, corpus: list[str], k1: float = 1.5, b: float = 0.75):
+        """预计算语料分词、文档长度和词项文档频率。"""
         self.k1 = k1
         self.b = b
         self.corpus = corpus
@@ -50,9 +51,11 @@ class BM25:
 
     @staticmethod
     def _tokenize(text: str) -> list[str]:
+        """复用模块级中英文分词规则。"""
         return _tokenize(text)
 
     def score(self, query: str) -> list[float]:
+        """计算查询相对每篇文档的 Okapi BM25 分数。"""
         scores = [0.0] * self.n
         for term in self._tokenize(query):
             df = self.df.get(term, 0)
@@ -78,6 +81,7 @@ def _rrf_fuse(rankings: list[list[int]], k: int = 60) -> list[tuple[int, float]]
 
 
 async def _load_chunks(db: AsyncSession) -> list[KnowledgeChunk]:
+    """加载已生成向量的全部知识片段作为混合检索语料。"""
     return (
         await db.execute(
             select(KnowledgeChunk).where(KnowledgeChunk.embedding.is_not(None))
@@ -91,7 +95,11 @@ async def hybrid_retrieve(
     embedding: EmbeddingProvider,
     top_k: int = 5,
 ) -> tuple[list[dict], str]:
-    """向量 + BM25 混合检索，RRF 融合。"""
+    """执行向量与 BM25 双路召回，并使用 RRF 融合排名。
+
+    Returns:
+        ``(结果列表, "hybrid")``；结果同时保留融合、BM25 和向量分数。
+    """
     chunks = await _load_chunks(db)
     if not chunks:
         return [], "empty"
@@ -130,6 +138,7 @@ async def hybrid_retrieve(
 
 
 async def _text_retrieve(db: AsyncSession, query: str, top_k: int) -> list[dict]:
+    """使用数据库 ILIKE 执行无向量依赖的精确文本兜底检索。"""
     pattern = f"%{query}%"
     chunks = (
         await db.execute(

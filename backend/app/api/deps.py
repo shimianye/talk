@@ -19,6 +19,7 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    """解析 Bearer JWT 并加载仍处于启用状态的用户及其角色。"""
     if credentials is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "未提供认证令牌")
     try:
@@ -41,6 +42,7 @@ def require_role(*roles: str):
     """角色守卫依赖工厂。"""
 
     async def checker(user: User = Depends(get_current_user)) -> User:
+        """确认当前用户至少拥有一个路由允许的角色。"""
         user_roles = {r.name for r in user.roles}
         if not (user_roles & set(roles)):
             raise HTTPException(status.HTTP_403_FORBIDDEN, "权限不足")

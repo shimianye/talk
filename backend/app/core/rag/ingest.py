@@ -19,6 +19,7 @@ _EFFECTIVE_RE = re.compile(r"生效日期[：:]\s*(\d{4}-\d{2}-\d{2})")
 
 
 def _parse_document(path: Path) -> dict:
+    """解析知识文档标题、版本、生效日期、内容哈希和原始正文。"""
     text = path.read_text(encoding="utf-8")
     m = _TITLE_RE.search(text)
     title = m.group(1).strip() if m else path.stem
@@ -42,7 +43,11 @@ async def ingest_kb_docs(
     embedding: EmbeddingProvider,
     chunk_size: int = 500,
 ) -> dict:
-    """入库知识库目录，返回统计信息。幂等：按内容哈希跳过已入库文档。"""
+    """切分并向量化目录中的 Markdown，按内容哈希幂等入库。
+
+    Returns:
+        包含 ``documents``、``chunks``、``skipped`` 数量的导入统计。
+    """
     files = sorted(docs_dir.rglob("*.md")) if docs_dir.is_dir() else []
     stats = {"documents": 0, "chunks": 0, "skipped": 0}
 

@@ -67,6 +67,7 @@ def parse_dt(v):
 
 
 def load_rows(path: Path, sheet: str):
+    """以只读模式加载 Excel 工作表，返回表头和数据行。"""
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
     ws = wb[sheet]
     rows = ws.iter_rows(values_only=True)
@@ -77,6 +78,7 @@ def load_rows(path: Path, sheet: str):
 
 
 def rows_to_dicts(header, rows, drop_cols=None, dt_cols=None):
+    """按表头将 Excel 行转换为字典，并处理忽略列和时间列。"""
     drop_cols = set(drop_cols or [])
     dt_cols = set(dt_cols or [])
     out = []
@@ -91,6 +93,7 @@ def rows_to_dicts(header, rows, drop_cols=None, dt_cols=None):
 
 
 async def import_sheet(session, path, sheet, model, drop_cols=None, dt_cols=None):
+    """将指定工作表批量实例化为 ORM 对象，返回导入行数。"""
     header, rows = load_rows(path, sheet)
     dicts = rows_to_dicts(header, rows, drop_cols, dt_cols)
     session.add_all([model(**d) for d in dicts])
@@ -192,6 +195,7 @@ async def validate_seed_integrity() -> dict:
 
 
 async def main() -> None:
+    """创建扩展和表，校验并导入业务种子数据，最后构建 RAG 索引。"""
     engine = create_async_engine(settings.database_url)
     session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 

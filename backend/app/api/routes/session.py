@@ -18,6 +18,7 @@ async def list_sessions(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
+    """按创建顺序倒序返回当前用户自己的会话列表。"""
     convs = (
         await db.execute(
             select(Conversation).where(Conversation.user_id == user.user_id).order_by(Conversation.id.desc())
@@ -32,6 +33,7 @@ async def get_session(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
+    """返回指定会话及其按顺序排列的消息记录。"""
     conv = (
         await db.execute(
             select(Conversation).where(Conversation.conversation_id == session_id)

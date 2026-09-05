@@ -37,6 +37,7 @@ _INTENT_PROMPT = (
 
 
 def _assistant_tool_call_message(tool_calls: list[dict]) -> dict:
+    """将内部工具调用转换成 OpenAI assistant tool_calls 消息。"""
     return {
         "role": "assistant",
         "content": None,
@@ -55,10 +56,12 @@ def _assistant_tool_call_message(tool_calls: list[dict]) -> dict:
 
 
 def _tool_result_message(tool_call_id: str, content: str) -> dict:
+    """构造供 LLM 继续推理的 OpenAI tool 结果消息。"""
     return {"role": "tool", "tool_call_id": tool_call_id, "content": content}
 
 
 def _last_user_text(state: AgentState) -> str:
+    """从状态消息中倒序取得最近一条用户文本。"""
     for m in reversed(state.get("messages", [])):
         if m.get("role") == "user":
             return str(m.get("content", ""))
@@ -86,6 +89,7 @@ async def _extract_intent(state: AgentState) -> None:
 
 
 async def load_session_context(state: AgentState) -> AgentState:
+    """初始化本轮 Trace、计数器和控制字段，并恢复已确认的工具调用。"""
     state["trace_id"] = state.get("trace_id") or uuid.uuid4().hex
     state.setdefault("steps", 0)
     state.setdefault("total_tool_calls", 0)
@@ -101,6 +105,7 @@ async def load_session_context(state: AgentState) -> AgentState:
 
 
 async def input_guardrail(state: AgentState) -> AgentState:
+    """检查最近输入中的提示词注入特征，命中时阻断后续模型调用。"""
     text = _last_user_text(state)
     flags = guardrails.check_input_injection(text)
     state["guardrail_flags"] = state.get("guardrail_flags", []) + flags
@@ -111,6 +116,7 @@ async def input_guardrail(state: AgentState) -> AgentState:
 
 
 async def agent_decision(state: AgentState) -> AgentState:
+    """调用 LLM 决定直接回答还是使用工具，并执行步数与故障降级控制。"""
     # 输入已被拦截，直接走最终回答
     if "blocked" in state.get("guardrail_flags", []):
         return state
@@ -156,6 +162,7 @@ async def agent_decision(state: AgentState) -> AgentState:
 
 
 async def tool_execution(state: AgentState) -> AgentState:
+    """按调用顺序执行已授权工具，处理确认、澄清和转人工分支。"""
     ctx = ToolContext(
         user_id=state.get("user_id"),
         role=state.get("role", "consumer"),
@@ -209,6 +216,7 @@ async def tool_execution(state: AgentState) -> AgentState:
 
 
 async def validate_tool_result(state: AgentState) -> AgentState:
+    """递归脱敏工具返回的数据，并记录工具结果中的 PII 风险。"""
     # 工具结果 PII/注入检查：递归脱敏 dict/list/str（设计文档安全链路）
     for r in state.get("tool_results", []):
         if r.get("success"):
@@ -221,11 +229,13 @@ async def validate_tool_result(state: AgentState) -> AgentState:
 
 
 async def ask_clarification(state: AgentState) -> AgentState:
+    """保留工具节点生成的澄清问题并结束本轮执行。"""
     # final_answer 已由 tool_execution 设置为澄清问题
     return state
 
 
 async def human_handoff(state: AgentState) -> AgentState:
+    """标记会话需要人工接管，并确保存在面向用户的提示语。"""
     state["handoff_required"] = True
     if not state.get("final_answer"):
         state["final_answer"] = "已为您转接人工客服，请稍候。"
@@ -233,6 +243,7 @@ async def human_handoff(state: AgentState) -> AgentState:
 
 
 async def output_guardrail(state: AgentState) -> AgentState:
+    """检查模型回答中的越权承诺，命中时改为人工确认。"""
     text = state.get("final_answer") or ""
     flags = guardrails.check_output_commitments(text)
     if flags:
@@ -243,6 +254,7 @@ async def output_guardrail(state: AgentState) -> AgentState:
 
 
 async def save_trace(state: AgentState) -> AgentState:
+    """将本轮意图、工具、安全标记和最终答案持久化为 Agent Trace。"""
     # 持久化 Agent Trace 与审计（db 未注入时静默跳过，便于离线单测）
     db = state.get("db")
     if db is None:

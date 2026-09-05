@@ -13,6 +13,8 @@ _TOKEN_RE = re.compile(r"[\w\u4e00-\u9fff]+")
 
 
 class EmbeddingProvider(ABC):
+    """文本向量化提供者的统一异步接口。"""
+
     @abstractmethod
     async def embed(self, texts: list[str]) -> list[list[float]]:
         """批量向量化。"""
@@ -26,12 +28,15 @@ class MockEmbeddingProvider(EmbeddingProvider):
     """
 
     def __init__(self, dim: int = 1024):
+        """设置哈希向量维度；必须与数据库 vector 列维度一致。"""
         self.dim = dim
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
+        """批量生成确定性的 L2 归一化哈希向量。"""
         return [self._embed_one(t) for t in texts]
 
     def _embed_one(self, text: str) -> list[float]:
+        """将一段文本映射为固定维度的词袋哈希向量。"""
         vec = [0.0] * self.dim
         for tok in _TOKEN_RE.findall((text or "").lower()):
             h = int(hashlib.md5(tok.encode("utf-8")).hexdigest(), 16)
@@ -44,6 +49,7 @@ class RemoteEmbeddingProvider(EmbeddingProvider):
     """OpenAI 兼容 Embedding（可接 TEI 部署的 BGE-M3、Ollama 等）。"""
 
     def __init__(self, base_url: str, model: str, api_key: str = ""):
+        """创建指向 OpenAI 兼容 Embedding 服务的异步 HTTP 客户端。"""
         import httpx
 
         self.model = model
@@ -54,6 +60,7 @@ class RemoteEmbeddingProvider(EmbeddingProvider):
         )
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
+        """调用远程服务并按原始 input 索引返回向量。"""
         resp = await self._client.post(
             "/v1/embeddings", json={"model": self.model, "input": texts}
         )
@@ -65,6 +72,7 @@ class RemoteEmbeddingProvider(EmbeddingProvider):
 
 @lru_cache
 def get_embedding_provider() -> EmbeddingProvider:
+    """按配置返回缓存的远程向量服务或本地 Mock 实现。"""
     if settings.embedding_provider == "openai" and settings.embedding_base_url:
         return RemoteEmbeddingProvider(
             base_url=settings.embedding_base_url,

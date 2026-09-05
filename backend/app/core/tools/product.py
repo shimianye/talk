@@ -10,6 +10,7 @@ from app.models import Price, Product, ProductVariant
 
 
 def _build_product_filter(query: str | None, product_id: str | None, model: str | None):
+    """按 product_id、型号或文本关键词构造商品 SPU 查询。"""
     stmt = select(Product)
     if product_id:
         return stmt.where(Product.product_id == product_id)
@@ -28,6 +29,7 @@ def _build_product_filter(query: str | None, product_id: str | None, model: str 
 
 
 async def _load_product_details(db: AsyncSession, product: Product) -> dict:
+    """聚合一个商品 SPU 的 SKU 规格和官方指导价。"""
     variants = (
         await db.execute(
             select(ProductVariant).where(ProductVariant.product_id == product.product_id)
@@ -48,6 +50,7 @@ async def _load_product_details(db: AsyncSession, product: Product) -> dict:
 async def _query_product_spec(ctx: ToolContext, query: str | None = None,
                               product_id: str | None = None,
                               model: str | None = None) -> ToolResult:
+    """查询匹配手机的基础信息、全部规格和官方价格。"""
     stmt = _build_product_filter(query, product_id, model)
     if stmt is None:
         return ToolResult(success=False, error="请提供 query/product_id/model 之一", error_code="MISSING_PARAM")
@@ -60,6 +63,7 @@ async def _query_product_spec(ctx: ToolContext, query: str | None = None,
 
 async def _compare_products(ctx: ToolContext, product_ids: list[str] | None = None,
                             query: str | None = None) -> ToolResult:
+    """按商品 ID 或关键词加载多款手机的结构化对比数据。"""
     ids = product_ids or []
     if query and not ids:
         products = (await ctx.db.execute(_build_product_filter(query, None, None))).scalars().all()
@@ -75,6 +79,7 @@ async def _recommend_products(ctx: ToolContext, budget: float | None = None,
                               preference: str | None = None,
                               brand: str | None = None,
                               top_n: int = 3) -> ToolResult:
+    """按品牌和预算筛选官方价格，并返回指定数量的候选手机。"""
     stmt = select(Price)
     if brand:
         stmt = stmt.join(Product, Product.product_id == Price.product_id).where(
@@ -101,6 +106,7 @@ async def _recommend_products(ctx: ToolContext, budget: float | None = None,
 
 
 def build_product_tools() -> list[Tool]:
+    """构建商品参数查询、对比和推荐三个只读工具。"""
     return [
         Tool(
             name="query_product_spec",

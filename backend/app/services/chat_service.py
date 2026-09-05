@@ -31,11 +31,13 @@ _CONFIRM_WORDS = ("确认", "同意", "好的", "可以", "是的", "确认一�
 
 
 def _pending_key(user_id: str, session_id: str) -> str:
+    """生成用户与会话双重隔离的 Redis 待确认键。"""
     # 键含 user_id，防止跨用户确认状态串用
     return f"pending:{user_id}:{session_id}"
 
 
 async def _load_conversation(db: AsyncSession, user: User, session_id: str) -> Conversation:
+    """加载现有会话；首次请求时按当前用户和角色创建会话。"""
     conv = (
         await db.execute(
             select(Conversation).where(Conversation.conversation_id == session_id)
@@ -54,6 +56,7 @@ async def _load_conversation(db: AsyncSession, user: User, session_id: str) -> C
 
 
 async def _load_history(db: AsyncSession, conversation_id: str) -> list[dict]:
+    """按消息顺序加载历史并转换为 OpenAI user/assistant 格式。"""
     msgs = (
         await db.execute(
             select(Message)
@@ -74,6 +77,17 @@ async def handle_chat(
     session_id: str,
     user_message: str,
 ) -> dict:
+    """处理一轮聊天，串联确认恢复、Agent 执行、持久化和审计。
+
+    Args:
+        db: 请求作用域的异步数据库会话。
+        user: 通过 JWT 加载且携带角色关系的当前用户。
+        session_id: 当前多轮会话 ID。
+        user_message: 用户本轮输入的原始文本。
+
+    Returns:
+        前端响应字典，包含回答、意图、确认状态、转人工状态和运行模式。
+    """
     role = next((r.name for r in user.roles), "consumer")
     conv = await _load_conversation(db, user, session_id)
     history = await _load_history(db, conv.conversation_id)

@@ -56,7 +56,10 @@ _ARGS_BY_TOOL = {
 
 
 class MockLLMClient(LLMClient):
+    """用于本地开发和测试的确定性 LLM 替身。"""
+
     def __init__(self, **_: Any):
+        """接受并忽略真实客户端配置，保持与工厂调用方式兼容。"""
         pass
 
     async def complete(
@@ -65,6 +68,7 @@ class MockLLMClient(LLMClient):
         tools: list[dict[str, Any]] | None = None,
         temperature: float = 0.0,
     ) -> LLMResponse:
+        """按关键词模拟工具选择，收到工具结果后生成固定格式回答。"""
         last_user = self._last_user_text(messages)
 
         # 上一轮是工具结果 → 转为文本作答，避免重复调用同一工具
@@ -105,11 +109,13 @@ class MockLLMClient(LLMClient):
         messages: list[dict[str, Any]],
         temperature: float = 0.0,
     ) -> dict[str, Any]:
+        """使用关键词规则模拟意图识别和结构化 JSON 输出。"""
         last_user = self._last_user_text(messages)
         return {"intent": self._classify_intent(last_user), "entities": {}, "query": last_user}
 
     @staticmethod
     def _classify_intent(text: str) -> str:
+        """将用户文本映射到评测数据使用的标准意图名称。"""
         # 关键词 → 意图（与 intent_taxonomy 对齐）
         if "对比" in text or "怎么选" in text:
             return "product_compare"
@@ -144,6 +150,7 @@ class MockLLMClient(LLMClient):
 
     @staticmethod
     def _last_user_text(messages: list[dict[str, Any]]) -> str:
+        """从 OpenAI 消息列表中取得最近一条用户输入。"""
         for m in reversed(messages):
             if m.get("role") == "user":
                 return str(m.get("content", ""))
@@ -151,10 +158,12 @@ class MockLLMClient(LLMClient):
 
     @staticmethod
     def _summarize(tool_result: str) -> str:
+        """截取工具结果生成简短的 Mock 回答片段。"""
         return f"（工具返回：{tool_result[:80]}）"
 
     @classmethod
     def _guess_args(cls, tool_name: str, text: str) -> dict[str, Any]:
+        """根据工具名称生成可重复执行的最小参数集合。"""
         key, default = _ARGS_BY_TOOL.get(tool_name, ("query", "text"))
         value = text if default == "text" else default
         args = {key: value}

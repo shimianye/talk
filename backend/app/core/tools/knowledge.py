@@ -12,6 +12,7 @@ from app.models import KnowledgeDocument
 
 async def _search_knowledge_base(ctx: ToolContext, query: str,
                                  top_k: int = 5) -> ToolResult:
+    """检索知识片段并补充去重后的来源文档信息。"""
     if not query:
         return ToolResult(success=False, error="查询词不能为空", error_code="MISSING_PARAM")
 
@@ -45,6 +46,7 @@ async def _search_knowledge_base(ctx: ToolContext, query: str,
 
 
 def build_knowledge_tools() -> list[Tool]:
+    """构建带引用溯源的知识库检索工具。"""
     return [
         Tool(
             name="search_knowledge_base",

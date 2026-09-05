@@ -16,6 +16,7 @@ async def run_eval(
     user: User = Depends(require_role("admin")),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
+    """仅允许管理员运行离线评测集并返回聚合指标。"""
     from eval.run_eval import run_evaluation
 
     return await run_evaluation(db=db)

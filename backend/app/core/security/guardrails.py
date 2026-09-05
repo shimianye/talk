@@ -48,6 +48,7 @@ def check_input_injection(text: str) -> list[str]:
 
 
 def _find_pii(text: str) -> list[str]:
+    """返回文本中检测到的手机号和身份证类型；不返回原始敏感值。"""
     found: list[str] = []
     if _PHONE_RE.search(text):
         found.append("phone")
@@ -89,6 +90,7 @@ def redact_recursive(data: Any) -> tuple[Any, bool]:
     found = False
 
     def rec(x: Any) -> Any:
+        """递归遍历字符串、字典和列表并更新命中标记。"""
         nonlocal found
         if isinstance(x, str):
             masked, hit = check_and_mask_pii(x)

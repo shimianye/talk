@@ -8,6 +8,7 @@ router = APIRouter(tags=["health"])
 
 @router.get("/health")
 async def health() -> dict:
+    """返回 API 状态及当前 LLM、Embedding 配置模式。"""
     return {
         "status": "ok",
         "mode": {

@@ -35,6 +35,8 @@ _RETRYABLE = (
 
 
 class DeepSeekClient(LLMClient):
+    """通过 OpenAI 兼容协议调用 DeepSeek 的异步客户端。"""
+
     def __init__(
         self,
         api_key: str,
@@ -44,6 +46,7 @@ class DeepSeekClient(LLMClient):
         max_retries: int = 2,
         failure_threshold: int = 3,
     ):
+        """创建客户端并配置模型、超时、重试和熔断策略。"""
         self.model = model
         self.max_retries = max_retries
         self.breaker = CircuitBreaker(failure_threshold=failure_threshold)
@@ -60,6 +63,7 @@ class DeepSeekClient(LLMClient):
         tools: list[dict[str, Any]] | None = None,
         temperature: float = 0.0,
     ) -> LLMResponse:
+        """执行普通对话补全，并将文本或工具调用转换为统一响应。"""
         if self.breaker.is_open:
             raise LLMUnavailableError("LLM 熔断已打开，暂不可用")
 
@@ -108,6 +112,7 @@ class DeepSeekClient(LLMClient):
         messages: list[dict[str, Any]],
         temperature: float = 0.0,
     ) -> dict[str, Any]:
+        """要求 DeepSeek 返回 JSON 对象，解析失败时返回空字典。"""
         if self.breaker.is_open:
             raise LLMUnavailableError("LLM 熔断已打开，暂不可用")
 
@@ -133,6 +138,7 @@ class DeepSeekClient(LLMClient):
             return {}
 
     async def _create_with_retry(self, **kwargs: Any):
+        """对可恢复的网络、限流和服务端错误执行指数退避重试。"""
         async for attempt in AsyncRetrying(
             stop=stop_after_attempt(self.max_retries + 1),
             wait=wait_exponential(multiplier=1, min=1, max=10),
