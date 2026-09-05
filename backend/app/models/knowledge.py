@@ -1,7 +1,7 @@
 """知识库、意图分类与评测集模型。"""
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Date, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 from pgvector.sqlalchemy import Vector
@@ -34,6 +34,15 @@ class KnowledgeChunk(Base):
     """知识片段（向量化后的检索单元）。"""
 
     __tablename__ = "knowledge_chunks"
+    __table_args__ = (
+        UniqueConstraint("document_id", "chunk_index", name="uq_knowledge_chunks_document_position"),
+        Index(
+            "ix_knowledge_chunks_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     document_id: Mapped[str] = mapped_column(
@@ -66,6 +75,7 @@ class EvaluationItem(Base):
     """评测集条目。对应 evaluation_dataset 的 evaluation 表。"""
 
     __tablename__ = "evaluation_dataset"
+    __table_args__ = (UniqueConstraint("question", name="uq_evaluation_dataset_question"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     category: Mapped[str | None] = mapped_column(String(64), index=True)

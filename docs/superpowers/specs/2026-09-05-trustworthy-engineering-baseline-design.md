@@ -62,7 +62,7 @@ docker compose up
 
 所有应用表、约束和索引都必须先声明在 SQLAlchemy ORM metadata 中，再由 Alembic 初始迁移固化。HNSW 使用模型的 `__table_args__` 声明 `Index`，指定 `postgresql_using="hnsw"` 和 `vector_cosine_ops`；必要的时间或复合索引也遵循同一规则。禁止只在迁移里增加 metadata 不可见的应用索引，也不使用 `include_object` 将其排除在漂移检查之外。
 
-`alembic/env.py` 导入 `pgvector.alembic`，在线和离线配置均启用 `compare_type=True` 与 `compare_server_default=True`。应用启动、测试和初始化脚本不再调用 `Base.metadata.create_all()`。
+当前锁定的 `pgvector==0.5.0` 不提供 `pgvector.alembic` 模块，因此 Alembic 不导入该不存在的扩展。模型中的 `pgvector.sqlalchemy.Vector` 参与 autogenerate，生成迁移显式导入 `pgvector.sqlalchemy`，并由实际升级和漂移检查验证 `Vector(1024)` 类型。在线和离线配置均启用 `compare_type=True` 与 `compare_server_default=True`。应用启动、测试和初始化脚本不再调用 `Base.metadata.create_all()`。
 
 HNSW 是为未来规模化准备的结构能力，不宣称在当前 20 篇知识文档上产生性能收益。`downgrade()` 必须按依赖逆序删除 HNSW/B-tree 索引和全部应用表，但保留当前数据库中的 `vector` 扩展；扩展不属于应用数据，且可能被同库后续迁移复用。
 

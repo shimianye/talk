@@ -1,10 +1,9 @@
 """Alembic 异步迁移环境。
 
-说明：pgvector 的 Vector 列在初始建表时由 scripts/init_db.py 的 create_all 处理；
-后续如需 autogenerate 识别 vector 类型，可在本文件顶部补充：
-    import pgvector.alembic  # noqa: F401
+数据库 URL 优先读取 ALEMBIC_DATABASE_URL，便于同一迁移配置服务主库、评测库与 CI 临时库。
 """
 import asyncio
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -21,7 +20,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option(
+    "sqlalchemy.url",
+    os.getenv("ALEMBIC_DATABASE_URL", settings.database_url),
+)
 
 target_metadata = Base.metadata
 
@@ -34,6 +36,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        compare_server_default=True,
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -41,7 +45,12 @@ def run_migrations_offline() -> None:
 
 def do_run_migrations(connection: Connection) -> None:
     """使用同步连接配置 Alembic 上下文并执行事务内迁移。"""
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+        compare_server_default=True,
+    )
     with context.begin_transaction():
         context.run_migrations()
 

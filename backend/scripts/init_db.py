@@ -1,13 +1,13 @@
-"""初始化数据库：创建 pgvector 扩展 + 建表 + 导入种子数据。
+"""初始化数据库：执行 Alembic 迁移并导入种子数据。
 
 用法（需先启动 PostgreSQL，例如 `docker compose up -d postgres`）：
     cd backend
     python scripts/init_db.py
 
-说明：本脚本是「快速引导」路径，用 Base.metadata.create_all 建表；
-Alembic 已配置可用于后续 schema 变更迁移（`alembic revision --autogenerate`）。
+数据库结构只由 Alembic 管；本脚本保留为迁移加内容导入的兼容入口。
 """
 import asyncio
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -20,7 +20,8 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 import openpyxl
-from sqlalchemy import text
+from alembic import command
+from alembic.config import Config
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -32,7 +33,6 @@ from app.config import settings
 from app.core.rag.embedding import get_embedding_provider
 from app.core.rag.ingest import ingest_kb_docs
 from app.core.security.password import hash_password
-from app.db.base import Base
 from app.models.catalog import (
     Inventory,
     Price,
@@ -51,6 +51,19 @@ KB_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "kb-docs"
 
 # 种子默认密码（演示用，生产务必更换）
 DEFAULT_PASSWORD = "password123"
+
+
+def upgrade_schema() -> None:
+    """使用当前应用数据库 URL 将结构升级到 Alembic head。"""
+    previous_url = os.environ.get("ALEMBIC_DATABASE_URL")
+    os.environ["ALEMBIC_DATABASE_URL"] = settings.database_url
+    try:
+        command.upgrade(Config(str(BACKEND_DIR / "alembic.ini")), "head")
+    finally:
+        if previous_url is None:
+            os.environ.pop("ALEMBIC_DATABASE_URL", None)
+        else:
+            os.environ["ALEMBIC_DATABASE_URL"] = previous_url
 
 
 def parse_dt(v):
@@ -195,17 +208,9 @@ async def validate_seed_integrity() -> dict:
 
 
 async def main() -> None:
-    """创建扩展和表，校验并导入业务种子数据，最后构建 RAG 索引。"""
+    """校验并导入业务种子数据，最后构建 RAG 索引。"""
     engine = create_async_engine(settings.database_url)
     session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-    async with engine.begin() as conn:
-        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-        print("[1/4] pgvector 扩展就绪")
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        print("[2/5] 数据表已创建（23 张，含外键约束）")
 
     anomalies = await validate_seed_integrity()
     total_anomalies = sum(len(v) for v in anomalies.values())
@@ -273,7 +278,7 @@ async def main() -> None:
 
         await session.commit()
 
-        print("[3/5] 种子数据导入完成")
+        print("[2/4] 种子数据导入完成")
         print("      用户/角色:", counts)
         for k, v in results.items():
             print(f"      {k}: {v} 行")
@@ -282,11 +287,13 @@ async def main() -> None:
         embedding = get_embedding_provider()
         kb_stats = await ingest_kb_docs(session, KB_DIR, embedding)
         await session.commit()
-        print("[4/5] 知识库入库完成:", kb_stats)
+        print("[3/4] 知识库入库完成:", kb_stats)
 
     await engine.dispose()
-    print("[5/5] 数据库初始化完成 ✅")
+    print("[4/4] 数据库初始化完成")
 
 
 if __name__ == "__main__":
+    upgrade_schema()
+    print("[1/4] Alembic 数据结构迁移完成")
     asyncio.run(main())

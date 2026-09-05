@@ -1,7 +1,7 @@
 """商品目录相关模型：商品、SKU、价格、来源、门店商品、库存、促销。"""
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -58,6 +58,7 @@ class Price(Base):
     """官方指导价。对应 phone_specs.xlsx 的 variants 表。"""
 
     __tablename__ = "prices"
+    __table_args__ = (UniqueConstraint("variant_id", name="uq_prices_variant_id"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variant_id: Mapped[str] = mapped_column(
@@ -97,6 +98,7 @@ class StoreProduct(Base):
     """门店在售商品（含售价、促销、成本）。对应 store_products 表。"""
 
     __tablename__ = "store_products"
+    __table_args__ = (UniqueConstraint("sku", name="uq_store_products_sku"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variant_id: Mapped[str] = mapped_column(

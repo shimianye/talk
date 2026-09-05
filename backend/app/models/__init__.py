@@ -25,6 +25,7 @@ from app.models.order import (
     Order,
     OrderItem,
 )
+from app.models.sync import SyncManifest
 from app.models.user import Role, User, UserRole
 
 __all__ = [
@@ -51,6 +52,7 @@ __all__ = [
     "KnowledgeChunk",
     "IntentTaxonomy",
     "EvaluationItem",
+    "SyncManifest",
     # conversation
     "Conversation",
     "Message",

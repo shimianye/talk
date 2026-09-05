@@ -62,7 +62,7 @@
 1. 在 `KnowledgeChunk.__table_args__` 声明 HNSW cosine 索引。
 2. 给 `KnowledgeChunk` 增加 `(document_id, chunk_index)` 唯一约束；给 `Price.variant_id`、`StoreProduct.sku` 和 `EvaluationItem.question` 增加经源数据唯一性验证后的唯一约束。`Price` 数据来自 `phone_specs.xlsx/variants`；该约束表达当前官方价一对一，历史价未来拆独立表。
 3. 定义 `SyncManifest` 并注册模型，使初始迁移一次性包含 24 张表，后续任务不回改该迁移。
-4. 在 Alembic env 注册 pgvector 类型、URL override、类型/default 比较。
+4. Alembic env 配置 URL override、类型/default 比较；当前 `pgvector==0.5.0` 不存在 `pgvector.alembic`，生成文件显式导入 `pgvector.sqlalchemy`，以实际升级和漂移检查验证 Vector 类型。
 5. 使用临时干净数据库 autogenerate 初始 DDL，人工复核表数、外键、默认值、Vector(1024) 和全部索引。
 6. 补全 downgrade，逆序删除应用对象但保留 `vector` 扩展。
 7. 将 `backend/scripts/init_db.py` 的 `create_all()` 替换为执行 `alembic upgrade head`，保证 T-A 提交单独检出时原初始化命令仍可运行。
