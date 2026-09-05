@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from app.core.llm.base import LLMClient, LLMResponse, ToolCall
@@ -166,6 +167,9 @@ class MockLLMClient(LLMClient):
         """根据工具名称生成可重复执行的最小参数集合。"""
         key, default = _ARGS_BY_TOOL.get(tool_name, ("query", "text"))
         value = text if default == "text" else default
+        if key == "order_id":
+            value = re.search(r"ORD\d+", text, re.IGNORECASE)
+            value = value.group(0).upper() if value else default
         args = {key: value}
         if tool_name == "create_after_sales_case":
             args.update({"case_type": "退货", "description": text})

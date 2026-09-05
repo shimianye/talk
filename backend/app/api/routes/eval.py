@@ -2,10 +2,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.api.deps import require_role
-from app.db.session import get_db
 from app.models import User
 
 router = APIRouter(prefix="/eval", tags=["eval"])
@@ -14,9 +11,8 @@ router = APIRouter(prefix="/eval", tags=["eval"])
 @router.post("/run")
 async def run_eval(
     user: User = Depends(require_role("admin")),
-    db: AsyncSession = Depends(get_db),
 ) -> dict:
-    """仅允许管理员运行离线评测集并返回聚合指标。"""
+    """仅允许管理员在独立评测库运行评测并返回报告。"""
     from eval.run_eval import run_evaluation
 
-    return await run_evaluation(db=db)
+    return await run_evaluation()

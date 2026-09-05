@@ -36,3 +36,7 @@ dist-ssr/
 logs/
 tmp/
 *.pid
+
+# 自动评测临时报告（代表性报告由文档任务按需挑选）
+backend/eval/reports/*.json
+backend/eval/reports/*.md
