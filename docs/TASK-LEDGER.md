@@ -8,8 +8,8 @@
 
 | ID | 任务 | 负责方 | 状态 | 依赖 | 备注 |
 |----|------|--------|------|------|------|
-| T-A | 真实 Alembic 初始迁移（autogenerate + 校验 upgrade/downgrade + 移除 create_all） | Codex | 待复核 | 无 | commit `0e050d6`；三连、漂移、带数据回滚均通过 |
-| T-B | 幂等种子导入 + 知识库按内容版本更新 | 待认领（建议 Codex） | 待认领 | T-A | 仅重嵌内容变化的文档 |
+| T-A | 真实 Alembic 初始迁移（autogenerate + 校验 upgrade/downgrade + 移除 create_all） | Codex | 已完成 | 无 | commit `0e050d6`；WorkBuddy 复核通过 |
+| T-B | 幂等种子导入 + 知识库按内容版本更新 | Codex | 待复核 | T-A | commit `633d03a`；快速路径、恢复、reset、重嵌和孤儿清理均通过 |
 | T-C | 独立评测库 + init 参数化（--database-url） | 待认领（建议 Codex） | 待认领 | T-A, T-B | 评测库需同样完成迁移 + 灌种 |
 | T-D | 评测修复四项：读 state["intent"] / 真实种子用户（owner + 非 owner）/ 单条异常兜底 / 报告落盘 | 待认领（建议 Codex） | 待认领 | T-C | 意图指标可能下滑，属正常，不得回补 |
 | T-E | GitHub Actions CI（postgres+redis service、迁移、pytest、Mock 评测、绿徽章） | 待认领 | 待认领 | T-A, T-D | 卡超过 1 天则跳过，留到阶段二 |
