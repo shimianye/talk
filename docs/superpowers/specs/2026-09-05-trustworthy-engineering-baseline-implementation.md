@@ -34,6 +34,7 @@
 
 - `backend/tests/integration/test_migrations.py`
 - `backend/scripts/check_migration_drift.py`
+- `backend/scripts/check_seed_uniqueness.py`：持续验证所有自然冲突键，供本地与 CI 复用。
 - `backend/app/models/sync.py`：先定义 `SyncManifest`，使其进入唯一且完整的初始结构基线。
 
 测试职责：
@@ -59,7 +60,7 @@
 操作：
 
 1. 在 `KnowledgeChunk.__table_args__` 声明 HNSW cosine 索引。
-2. 给 `KnowledgeChunk` 增加 `(document_id, chunk_index)` 唯一约束；给 `Price.variant_id`、`StoreProduct.sku` 和 `EvaluationItem.question` 增加经源数据唯一性验证后的唯一约束。
+2. 给 `KnowledgeChunk` 增加 `(document_id, chunk_index)` 唯一约束；给 `Price.variant_id`、`StoreProduct.sku` 和 `EvaluationItem.question` 增加经源数据唯一性验证后的唯一约束。`Price` 数据来自 `phone_specs.xlsx/variants`；该约束表达当前官方价一对一，历史价未来拆独立表。
 3. 定义 `SyncManifest` 并注册模型，使初始迁移一次性包含 24 张表，后续任务不回改该迁移。
 4. 在 Alembic env 注册 pgvector 类型、URL override、类型/default 比较。
 5. 使用临时干净数据库 autogenerate 初始 DDL，人工复核表数、外键、默认值、Vector(1024) 和全部索引。
@@ -111,7 +112,8 @@ feat(db): establish real Alembic baseline migration
 2. 计算按规范路径排序后的 xlsx SHA-256、同步器版本和 schema revision 组合指纹。
 3. 哈希未变且 manifest 状态成功时返回 `skipped=True`。
 4. 哈希变化时按外键拓扑用 PostgreSQL `insert().on_conflict_do_update()` 写入。
-5. 已验证冲突键：`prices.variant_id`、`store_products.sku`、`evaluation_dataset.id`，其余表使用既有业务主键或组合主键；实现测试再次检查唯一性，禁止以不可靠字段临时拼键。
+5. 已验证冲突键：`phone_specs.xlsx/variants` 的 `prices.variant_id`、`business_data.xlsx/store_products` 的 `store_products.sku`、`evaluation_dataset.xlsx/evaluation` 的 `evaluation_dataset.id`，其余表使用既有业务主键或组合主键；`check_seed_uniqueness.py` 持续检查，禁止以不可靠字段临时拼键。
+6. `users` 没有直接工作表来源：保留现有逻辑，从 orders/after-sales 的 `user_id` 派生消费者，去重后 upsert 用户、角色与 `user_roles`；该路径独立于通用 xlsx 表导入器。
 6. 单事务包含业务 upsert、后置验证和 manifest 更新；失败整体回滚。
 7. `--reset` 显式清空受管种子表并重新同步，默认模式不删除运行期业务数据。
 

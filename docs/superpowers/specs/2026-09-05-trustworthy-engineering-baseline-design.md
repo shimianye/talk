@@ -83,6 +83,7 @@ alembic upgrade head -> alembic downgrade base -> alembic upgrade head
 结构迁移和内容同步拆分为独立职责。种子同步保留现有时间序和外键引用预校验，并遵循外键依赖顺序。
 
 - 使用每张表的业务主键作为冲突键；关联表使用组合主键。
+- `prices.variant_id` 表达“每个 SKU 只有一条当前官方指导价”的业务不变量；若未来支持历史价或分渠道价格，新增 `price_history` 等历史表，不放宽当前价唯一约束。
 - 使用 PostgreSQL `INSERT ... ON CONFLICT DO UPDATE`，不使用 ORM `merge()`。
 - 一次同步使用单个事务，任何表失败则整批回滚。
 - 计算所有种子 xlsx 的文件哈希与同步器版本，写入 manifest 表。
