@@ -31,6 +31,31 @@ services:
       timeout: 3s
       retries: 12
 
+  init:
+    build: ./backend
+    container_name: pca-init
+    restart: "no"
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-true}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pca}:${POSTGRES_PASSWORD:-pca_password}@postgres:5432/${POSTGRES_DB:-phone_commerce}
+      EVAL_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pca}:${POSTGRES_PASSWORD:-pca_password}@postgres:5432/${POSTGRES_DB:-phone_commerce}_eval
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-mock}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-bge-m3}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-1024}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      KB_DOCS_DIR: /data/kb-docs
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: python scripts/bootstrap.py
+
   api:
     build: ./backend
     container_name: pca-api
@@ -39,12 +64,18 @@ services:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       DEBUG: ${DEBUG:-true}
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pca}:${POSTGRES_PASSWORD:-pca_password}@postgres:5432/${POSTGRES_DB:-phone_commerce}
+      EVAL_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pca}:${POSTGRES_PASSWORD:-pca_password}@postgres:5432/${POSTGRES_DB:-phone_commerce}_eval
       REDIS_URL: redis://redis:6379/0
       LLM_PROVIDER: ${LLM_PROVIDER:-mock}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
       DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-chat}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-mock}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-bge-m3}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-1024}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      KB_DOCS_DIR: /data/kb-docs
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
@@ -58,6 +89,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      init:
+        condition: service_completed_successfully
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:

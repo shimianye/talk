@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     # 数据库 / 缓存
     database_url: str = "postgresql+asyncpg://pca:pca_password@localhost:5432/phone_commerce"
+    eval_database_url: str = ""
     redis_url: str = "redis://localhost:6379/0"
 
     # LLM
