@@ -15,6 +15,9 @@ _TOKEN_RE = re.compile(r"[\w\u4e00-\u9fff]+")
 class EmbeddingProvider(ABC):
     """文本向量化提供者的统一异步接口。"""
 
+    model_name: str
+    dim: int
+
     @abstractmethod
     async def embed(self, texts: list[str]) -> list[list[float]]:
         """批量向量化。"""
@@ -29,6 +32,7 @@ class MockEmbeddingProvider(EmbeddingProvider):
 
     def __init__(self, dim: int = 1024):
         """设置哈希向量维度；必须与数据库 vector 列维度一致。"""
+        self.model_name = "mock-hash-v1"
         self.dim = dim
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
@@ -48,11 +52,13 @@ class MockEmbeddingProvider(EmbeddingProvider):
 class RemoteEmbeddingProvider(EmbeddingProvider):
     """OpenAI 兼容 Embedding（可接 TEI 部署的 BGE-M3、Ollama 等）。"""
 
-    def __init__(self, base_url: str, model: str, api_key: str = ""):
+    def __init__(self, base_url: str, model: str, api_key: str = "", dim: int = 1024):
         """创建指向 OpenAI 兼容 Embedding 服务的异步 HTTP 客户端。"""
         import httpx
 
         self.model = model
+        self.model_name = model
+        self.dim = dim
         self._client = httpx.AsyncClient(
             base_url=base_url,
             headers={"Authorization": f"Bearer {api_key}"} if api_key else {},
@@ -78,5 +84,6 @@ def get_embedding_provider() -> EmbeddingProvider:
             base_url=settings.embedding_base_url,
             model=settings.embedding_model,
             api_key=settings.embedding_api_key,
+            dim=settings.embedding_dim,
         )
     return MockEmbeddingProvider(dim=settings.embedding_dim)

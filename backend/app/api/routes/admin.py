@@ -9,8 +9,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_role
+from app.config import settings
 from app.core.rag.embedding import get_embedding_provider
-from app.core.rag.ingest import ingest_kb_docs
 from app.core.security.audit import write_audit
 from app.core.tools.utils import serialize
 from app.db.session import get_db
@@ -208,8 +208,9 @@ async def reingest_kb(
 ) -> dict:
     """由管理员触发知识文档幂等重入库并返回统计。"""
     from pathlib import Path
+    from app.services.kb_sync import sync_knowledge_docs
 
-    kb_dir = Path(__file__).resolve().parents[3] / "data" / "kb-docs"
-    stats = await ingest_kb_docs(db, kb_dir, get_embedding_provider())
+    kb_dir = Path(settings.kb_docs_dir)
+    stats = await sync_knowledge_docs(db, kb_dir, get_embedding_provider())
     await db.commit()
     return {"stats": stats}

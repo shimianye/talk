@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from pathlib import Path
 
 import pytest
 from alembic import command
@@ -13,6 +14,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 import app.models  # noqa: F401  注册完整 ORM metadata
 from app.db.base import Base
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 
 def _migration_test_url() -> str:
@@ -60,7 +63,7 @@ def test_migration_upgrade_downgrade_and_drift() -> None:
     url = _migration_test_url()
     assert len(Base.metadata.tables) == 24
 
-    config = Config("alembic.ini")
+    config = Config(str(BACKEND_DIR / "alembic.ini"))
     command.upgrade(config, "head")
     assert asyncio.run(_inspect_database(url)) == (24, True, True)
 

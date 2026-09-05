@@ -2,6 +2,7 @@
 from fastapi import APIRouter
 
 from app.config import settings
+from app.core.rag.embedding import get_embedding_provider
 
 router = APIRouter(tags=["health"])
 
@@ -15,7 +16,7 @@ async def health() -> dict:
             "llm_provider": settings.llm_provider,
             "llm_model": settings.deepseek_model if settings.llm_provider == "deepseek" else "mock",
             "embedding_provider": settings.embedding_provider,
-            "embedding_model": settings.embedding_model if settings.embedding_provider != "mock" else "mock-hash",
+            "embedding_model": get_embedding_provider().model_name,
         },
         "components": {
             "database": "pending",
