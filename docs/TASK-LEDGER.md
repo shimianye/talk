@@ -25,7 +25,7 @@
 | T-H | 前端 SSE 流式消费（改 `frontend/src/api.ts`） | Codex | 已完成 | 阶段一完成 | 方案 A 已实现；含跨 chunk SSE 解析、AbortController 清理、按帧 token 缓冲、done 收尾和同步降级；后端 SSE/LLM 不改；commit `cacd648`；WorkBuddy 只读复核通过（8 项清单全绿，3 个非阻断瑕疵见 `outputs/T-H复核-cacd648.md`） |
 | T-I | 聊天页重截图 | 夜灯 | 已完成 | T-H | 单帧完整答案；`02-consumer-chat.png` 已更新（1280×1617，<1MB），内容含登录态、问题与完整客服回复；WorkBuddy 只读复核通过（4 项全绿） |
 | T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 已完成 | T-H | Mock 基线已完成并由 WorkBuddy 复核：20 虚拟用户、1～3 秒思考间隔、60 秒、210 次 chat、0 失败，P50 3100ms / P95 5800ms / RPS 3.56；开发库已按边界清理 4 张运行态表，业务基线保持 products=9 / orders=50 / knowledge_documents=20 / evaluation_dataset=100 |
-| T-K | 1 分钟演示视频 | 待认领 | 待认领 | T-H |
+| T-K | 1 分钟演示视频 | 夜灯 | 已完成 | T-H | 4K/60fps 成片 58.5s：README 架构 + 决策文档 + SSE 打字机 + 评测报告 + CI 绿徽章；补镜头（评测/CI 两张横版图 + 14s 片段）由夜灯用 matplotlib+ffmpeg 生成；视频存仓库外（`E:\失眠夜的探店日记\...\9月6日.mp4`），README 链接待定 |
 | T-L | 技术决策文档 v2（补 SSE 章节） | 夜灯 | 已完成 | T-H | 第 5 章 `05-sse-streaming.md` 的 5 条决策已只读复核通过；均与 `4d0748c` 实现一致，明确「前端打字机式渲染、不宣称真流式、不降低首字延迟」；README 索引、交接文档和台账已同步 |
 | T-M | 云部署 demo | 待认领 | 待认领 | T-J |
 
@@ -41,5 +41,8 @@
 | T-E | GitHub Actions CI（真实 Run 34005144560 success） | Codex | 2026-09-06 |
 | T-F | README 升级（架构图 / 指标双栏 / 4 张截图 / 数字修正） | 夜灯 | 2026-09-06 |
 | T-G | 技术决策文档 v1（架构 / RAG / 安全 / 评测四章 27 条决策） | 夜灯 | 2026-09-06 |
+| T-H | 前端 SSE 流式消费（打字机渲染 + loading 同步 + 降级） | Codex | 2026-09-06 |
+| T-I | 聊天页重截图 | 夜灯 | 2026-09-06 |
 | T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 2026-09-06 |
+| T-K | 1 分钟演示视频（4K 成片） | 夜灯 | 2026-09-06 |
 | T-L | 技术决策文档 v2（补 SSE 章节） | 夜灯 | 2026-09-06 |
