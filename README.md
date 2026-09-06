@@ -302,7 +302,7 @@ ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 
 ## 📷 截图
 
-> 截图素材待补充，目录 `docs/screenshots/` 已就位。
+> 4 张截图已就位（部署 / 聊天页 / 评测报告 / CI 绿徽章）。
 
 | 场景 | 文件 |
 |------|------|
