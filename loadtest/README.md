@@ -26,6 +26,7 @@ docker compose ps
 
 ```powershell
 $env:LLM_PROVIDER="mock"
+New-Item -ItemType Directory -Force loadtest/reports | Out-Null
 locust -f loadtest/locustfile.py --host http://localhost:8000 `
   --headless -u 20 -r 20 -t 60s --csv=loadtest/reports/mock `
   --html=loadtest/reports/mock.html
@@ -38,13 +39,13 @@ locust -f loadtest/locustfile.py --host http://localhost:8000 `
 ```powershell
 $env:LLM_PROVIDER="deepseek"
 $env:DEEPSEEK_API_KEY="你的真实Key"
-$env:LOADTEST_MAX_REQUESTS="100"
+New-Item -ItemType Directory -Force loadtest/reports | Out-Null
 locust -f loadtest/locustfile.py --host http://localhost:8000 `
   --headless -u 20 -r 20 -t 60s --csv=loadtest/reports/deepseek `
   --html=loadtest/reports/deepseek.html
 ```
 
-DeepSeek 可能一次聊天触发多次 LLM 调用；20 并发持续 60 秒可能消耗较多 token 或触发 429。正式跑之前建议先用 `-u 2 -r 1 -t 15s` 冒烟，并根据账户余额缩短时长。`LOADTEST_MAX_REQUESTS` 作为人工配额提醒，不会伪造指标或绕过服务端限制。
+DeepSeek 可能一次聊天触发多次 LLM 调用；20 并发持续 60 秒可能消耗较多 token 或触发 429。正式跑之前建议先用 `-u 2 -r 1 -t 15s` 冒烟，并根据账户余额缩短时长。脚本不伪造指标，也不会绕过服务端限制。
 
 ## 推荐压测口径
 
@@ -61,6 +62,7 @@ docker compose -p pca-loadtest down -v
 $env:POSTGRES_DB="phone_commerce_loadtest"
 docker compose -p pca-loadtest up -d --build
 docker compose -p pca-loadtest exec api python scripts/bootstrap.py
+New-Item -ItemType Directory -Force loadtest/reports | Out-Null
 locust -f loadtest/locustfile.py --host http://localhost:8000 --headless -u 20 -r 20 -t 60s --csv=loadtest/reports/mock
 docker compose -p pca-loadtest down -v
 Remove-Item Env:POSTGRES_DB
@@ -71,4 +73,3 @@ Remove-Item Env:POSTGRES_DB
 ## 结果与环境指纹
 
 不要把 `loadtest/reports/` 下的 CSV/HTML 当作业务质量评测。每次报告旁应记录：`git rev-parse HEAD`、`LLM_PROVIDER`、模型、数据库名、Locust 版本、并发/时长、请求问题池版本和机器资源。Mock 与 DeepSeek 报告必须使用不同文件名前缀。
-
