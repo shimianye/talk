@@ -26,7 +26,7 @@
 | T-I | 聊天页重截图 | 夜灯 | 已完成 | T-H | 单帧完整答案；`02-consumer-chat.png` 已更新（1280×1617，<1MB），内容含登录态、问题与完整客服回复；WorkBuddy 只读复核通过（4 项全绿） |
 | T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 已完成 | T-H | Mock 基线已完成并由 WorkBuddy 复核：20 虚拟用户、1～3 秒思考间隔、60 秒、210 次 chat、0 失败，P50 3100ms / P95 5800ms / RPS 3.56；开发库已按边界清理 4 张运行态表，业务基线保持 products=9 / orders=50 / knowledge_documents=20 / evaluation_dataset=100 |
 | T-K | 1 分钟演示视频 | 待认领 | 待认领 | T-H |
-| T-L | 技术决策文档 v2（补 SSE 章节） | 待认领（建议 夜灯） | 待认领 | T-H |
+| T-L | 技术决策文档 v2（补 SSE 章节） | 夜灯 | 待复核 | T-H | 新增第 5 章 `05-sse-streaming.md`（5 条决策：fetch+ReadableStream / 前端打字机渲染 / token 显示队列 / 同步降级 / 跨 chunk 解析），基于 `4d0748c`；README 索引已回填；明确「不宣称真流式」；待复核 |
 | T-M | 云部署 demo | 待认领 | 待认领 | T-J |
 
 ## 已完成

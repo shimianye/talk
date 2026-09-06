@@ -17,6 +17,7 @@
 | 第 2 章 | [02-rag.md](./02-rag.md) | 混合检索、零依赖 BM25、Mock/远程 Embedding、中文分词、切分策略、检索降级 | 第 1 章 |
 | 第 3 章 | [03-security.md](./03-security.md) | 双层护栏、PII 脱敏、Owner 数据隔离、写操作确认、RBAC、JWT/密码、审计、执行上限 | 第 1 章 |
 | 第 4 章 | [04-evaluation.md](./04-evaluation.md) | 独立评测库、身份映射、Owner 对偶探针、环境指纹、双格式报告、指标口径 | 第 1、3 章 |
+| 第 5 章 | [05-sse-streaming.md](./05-sse-streaming.md) | fetch+ReadableStream 解析 SSE、前端打字机渲染、token 显示队列、同步降级、跨 chunk 解析 | 第 1 章 |
 
 ## 决策记录的统一格式
 
@@ -40,5 +41,5 @@
 ## 记录时间与口径
 
 - 记录日期：2026-09-06
-- 记录基准：commit `3f28f4c`（HEAD）及其祖先，真实实现回溯，非设计臆想
+- 记录基准：第 1~4 章基于 commit `3f28f4c`；**第 5 章（SSE）基于 commit `4d0748c`**（T-H 最终态）
 - 数字口径：45 测试 / 14 工具（5 组）/ 9 Agent 节点 / 19 路由 / 24 张表（23 业务表 + T-B 新增 sync_manifests）+ 1 alembic_version / 15 外键 / 100 条评测集
