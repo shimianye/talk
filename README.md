@@ -313,6 +313,14 @@ ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 
 ---
 
+## 🎬 演示视频
+
+[B 站公开演示：手机电商智能客服 Agent · 1 分钟演示](docs/demo/README.md)
+
+视频覆盖 Docker 部署、消费者聊天、前端流式渲染、自动评测、CI 和压测结果。这里的“流式渲染”是前端打字机式播放，后端 LLM 仍为完整生成后返回。
+
+---
+
 ## 🧠 技术决策文档
 
 架构、RAG、安全、评测方法论四章的「为什么选 / 放弃了什么 / 何时失效」已整理于 `docs/decisions/`，每条决策标注状态（已采纳 / 待真实 LLM 验证）。
