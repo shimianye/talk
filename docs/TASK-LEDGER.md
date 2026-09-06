@@ -12,8 +12,8 @@
 | T-B | 幂等种子导入 + 知识库按内容版本更新 | Codex | 已完成 | T-A | commit `633d03a`；WorkBuddy 复核通过 |
 | T-C | 独立评测库 + init 参数化（--database-url） | Codex | 已完成 | T-A, T-B | commit `3c09783`；WorkBuddy 复核通过 |
 | T-D | 评测修复四项：读 state["intent"] / 真实种子用户（owner + 非 owner）/ 单条异常兜底 / 报告落盘 | Codex | 已完成 | T-C | commit `0f16eed`；方案 1、独立库、state 单源、双格式报告和 100 条 Mock 已通过；WorkBuddy 复核通过 |
-| T-E | GitHub Actions CI（postgres+redis service、迁移、pytest、Mock 评测、绿徽章） | Codex | 待复核 | T-A, T-D | workflow 已落地；本地按 CI 环境验证 `45 passed, 0 skipped`，等待 GitHub 首次运行 |
-| T-F | README 升级（Mermaid 架构图 / 真实指标双栏 / 4 张截图 / 修正过时描述） | 待认领（建议 夜灯） | 待认领 | T-D | 截图放 `docs/screenshots/` |
+| T-E | GitHub Actions CI（postgres+redis service、迁移、pytest、Mock 评测、绿徽章） | Codex | 已完成 | T-A, T-D | **真实 CI 已通过**：Run `34005144560` success（head `429ce8e`）；首次 `1c7a5bf` 因 runner 缺 `pg_isready`/`redis-cli` 失败在 readiness step，已由 `429ce8e` 安装 postgresql-client + redis-tools 修复；关键步骤全绿；artifact `eval-report-2-34005144560` 保留 30 天；未改业务代码 / 评测集 / Alembic / seed-kb |
+| T-F | README 升级（Mermaid 架构图 / 真实指标双栏 / 4 张截图 / 修正过时描述） | 夜灯 | 进行中 | T-D, T-E | README 已重写（11 节）：CI badge 启用（`shimianye/talk`）、Mermaid 架构图、Mock 指标双栏、安全与评测方法两节、路线图补 P2-P6 工程基线；数字修正 26→45 测试 / 13→15 外键 / 20→19 路由；**剩余 4 张截图**待失眠夜提供，规范见 `docs/screenshots/README.md` |
 | T-G | 技术决策文档 v1（架构 / RAG / 安全 / 评测方法论四章） | 待认领（建议 夜灯） | 待认领 | T-D | 每章写"为什么选 + 放弃什么 + 何时失效" |
 
 **护栏：9/12 前必须完成 T-A ~ T-D。**
@@ -38,3 +38,4 @@
 | T-B | 幂等种子导入 + 知识库按内容版本更新 | Codex | 2026-09-05 |
 | T-C | 独立评测库 + init 参数化 | Codex | 2026-09-05 |
 | T-D | 评测修复四项 | Codex | 2026-09-05 |
+| T-E | GitHub Actions CI（真实 Run 34005144560 success） | Codex | 2026-09-06 |
