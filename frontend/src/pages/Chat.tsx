@@ -16,16 +16,32 @@ export default function Chat() {
   const [streamStarted, setStreamStarted] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const tokenBufferRef = useRef('')
-  const frameRef = useRef<number | null>(null)
+  const drainTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => () => abortRef.current?.abort(), [])
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+      if (drainTimerRef.current !== null) clearTimeout(drainTimerRef.current)
+    },
+    [],
+  )
 
-  function flushTokens() {
-    frameRef.current = null
-    const pending = tokenBufferRef.current
-    tokenBufferRef.current = ''
-    if (!pending) return
-    setMessages((m) => m.map((msg, i) => (i === assistantIndexRef.current ? { ...msg, content: msg.content + pending } : msg)))
+  function drainTokenQueue() {
+    drainTimerRef.current = null
+    const token = tokenBufferRef.current.slice(0, 1)
+    tokenBufferRef.current = tokenBufferRef.current.slice(1)
+    if (token) {
+      setMessages((m) => m.map((msg, i) => (i === assistantIndexRef.current ? { ...msg, content: msg.content + token } : msg)))
+    }
+    if (tokenBufferRef.current) {
+      drainTimerRef.current = setTimeout(drainTokenQueue, 30)
+    }
+  }
+
+  function scheduleTokenDrain() {
+    if (drainTimerRef.current === null && tokenBufferRef.current) {
+      drainTimerRef.current = setTimeout(drainTokenQueue, 30)
+    }
   }
 
   const assistantIndexRef = useRef(-1)
@@ -38,6 +54,9 @@ export default function Chat() {
     setLoading(true)
     const controller = new AbortController()
     abortRef.current = controller
+    tokenBufferRef.current = ''
+    if (drainTimerRef.current !== null) clearTimeout(drainTimerRef.current)
+    drainTimerRef.current = null
     let started = false
     setStreamStarted(false)
     let completed = false
@@ -54,15 +73,13 @@ export default function Chat() {
         },
         onToken: (token) => {
           tokenBufferRef.current += token
-          if (frameRef.current === null) frameRef.current = requestAnimationFrame(flushTokens)
+          scheduleTokenDrain()
         },
         onMessageEnd: (answer) => {
-          if (frameRef.current !== null) {
-            cancelAnimationFrame(frameRef.current)
-            flushTokens()
-          }
           completed = true
-          setMessages((m) => m.map((msg, i) => (i === assistantIndexRef.current && !msg.content ? { ...msg, content: answer } : msg)))
+          if (!tokenBufferRef.current) {
+            setMessages((m) => m.map((msg, i) => (i === assistantIndexRef.current && !msg.content ? { ...msg, content: answer } : msg)))
+          }
         },
       }, controller.signal)
     } catch (err) {
