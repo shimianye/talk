@@ -40,3 +40,7 @@ tmp/
 # 自动评测临时报告（代表性报告由文档任务按需挑选）
 backend/eval/reports/*.json
 backend/eval/reports/*.md
+
+# Locust 压测临时产物与独立虚拟环境
+loadtest/reports/
+.venv-loadtest/

@@ -49,7 +49,7 @@ DeepSeek 可能一次聊天触发多次 LLM 调用；20 并发持续 60 秒可�
 
 ## 推荐压测口径
 
-固定记录：20 个并发用户、启动速率 20 用户/秒、稳态 60 秒、随机问题池、单机 Docker Compose。报告至少包含 P50、P95、RPS、请求数和错误率，并分别标注 Mock/DeepSeek、commit SHA、数据库名、时间、CPU/内存和 Locust 版本。
+固定记录：20 个虚拟用户、启动速率 5 用户/秒、每个用户请求间隔 1～3 秒、稳态 60 秒、随机问题池、单机 Docker Compose。这里的“20 并发”指 Locust 虚拟用户数，不等同于任意时刻 20 个请求同时在飞；实际 in-flight 数量受思考间隔和响应耗时影响。报告至少包含 P50、P95、RPS、请求数和错误率，并分别标注 Mock/DeepSeek、commit SHA、数据库名、时间、CPU/内存和 Locust 版本。
 
 Locust 结束后，终端会输出 `Aggregated` 行；CSV 中的 `*_stats.csv` 保存请求数、失败数、平均值、P50/P95 和 RPS。HTML 可作为人工评审证据。
 
