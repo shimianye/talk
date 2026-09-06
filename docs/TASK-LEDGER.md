@@ -23,7 +23,7 @@
 | ID | 任务 | 负责方 | 状态 | 依赖 |
 |----|------|--------|------|------|
 | T-H | 前端 SSE 流式消费（改 `frontend/src/api.ts`） | Codex | 已完成 | 阶段一完成 | 方案 A 已实现；含跨 chunk SSE 解析、AbortController 清理、按帧 token 缓冲、done 收尾和同步降级；后端 SSE/LLM 不改；commit `cacd648`；WorkBuddy 只读复核通过（8 项清单全绿，3 个非阻断瑕疵见 `outputs/T-H复核-cacd648.md`） |
-| T-I | 聊天页重截图 | 夜灯 | 待复核 | T-H | 已按确认方案改为单帧完整答案；`02-consumer-chat.png` 已更新（1280×1617，<1MB），内容含登录态、问题与完整客服回复；待 WorkBuddy 只读复核 |
+| T-I | 聊天页重截图 | 夜灯 | 已完成 | T-H | 单帧完整答案；`02-consumer-chat.png` 已更新（1280×1617，<1MB），内容含登录态、问题与完整客服回复；WorkBuddy 只读复核通过（4 项全绿） |
 | T-J | 并发压测（20 并发 P50/P95） | 待认领 | 待认领 | T-H |
 | T-K | 1 分钟演示视频 | 待认领 | 待认领 | T-H |
 | T-L | 技术决策文档 v2（补 SSE 章节） | 待认领（建议 夜灯） | 待认领 | T-H |
