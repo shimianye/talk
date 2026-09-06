@@ -14,7 +14,7 @@
 | T-D | 评测修复四项：读 state["intent"] / 真实种子用户（owner + 非 owner）/ 单条异常兜底 / 报告落盘 | Codex | 已完成 | T-C | commit `0f16eed`；方案 1、独立库、state 单源、双格式报告和 100 条 Mock 已通过；WorkBuddy 复核通过 |
 | T-E | GitHub Actions CI（postgres+redis service、迁移、pytest、Mock 评测、绿徽章） | Codex | 已完成 | T-A, T-D | **真实 CI 已通过**：Run `34005144560` success（head `429ce8e`）；首次 `1c7a5bf` 因 runner 缺 `pg_isready`/`redis-cli` 失败在 readiness step，已由 `429ce8e` 安装 postgresql-client + redis-tools 修复；关键步骤全绿；artifact `eval-report-2-34005144560` 保留 30 天；未改业务代码 / 评测集 / Alembic / seed-kb |
 | T-F | README 升级（Mermaid 架构图 / 真实指标双栏 / 4 张截图 / 修正过时描述） | 夜灯 | 进行中（等截图） | T-D, T-E | README 已重写（11 节）：CI badge 启用（`shimianye/talk`）、Mermaid 架构图、Mock 指标双栏、安全与评测方法两节、路线图补 P2-P6 工程基线；数字修正 26→45 测试 / 13→15 外键 / 20→19 路由；**badge 已验证 passing**（HTTP 200，绿 `#28A745`）；Mermaid 已做语法加固（`b7ce6d5`），渲染效果待人工确认（沙箱 Chromium 无法启动）；**远程 main 已推至 `d5a3e79`（含 T-G 决策文档 + 表数 23→24 修正），CI 复验 Run `34007566771` success**（1 warning=Node20 deprecation，非功能性）；**剩余 4 张截图**需失眠夜提供（沙箱无 docker daemon、无数据库、backend 依赖未装），规范见 `docs/screenshots/README.md` |
-| T-G | 技术决策文档 v1（架构 / RAG / 安全 / 评测方法论四章） | 夜灯 | 待复核 | T-D | 每章写"为什么选 + 放弃什么 + 何时失效"；已交付 `docs/decisions/`（README 索引 + 4 章，共 27 条决策），并回填 README「技术决策文档」节链接；基于 `3f28f4c` 真实实现回溯 |
+| T-G | 技术决策文档 v1（架构 / RAG / 安全 / 评测方法论四章） | 夜灯 | 已完成 | T-D | 27 条决策已按真实实现复核；数字口径核对通过（24 张表 / 15 外键 / 19 路由 / 14 工具 / 9 节点 / 100 条评测）；修正 `GIT_COMMIT` 的 CI 表述；T-F 仍等待 4 张截图 |
 
 **护栏：9/12 前必须完成 T-A ~ T-D。**
 

@@ -47,7 +47,7 @@
 - **背景**：「准确率 43%」若不知道跑在什么 commit、什么模型、什么 embedding 上，就是一句无法复现的空话。
 - **决策**：报告落盘时记录 `git_commit / llm_provider / llm_model / embedding_provider / embedding_model / embedding_dim / database_name / alembic_revision / run_at_utc / eval_set_sha256` 十项指纹。
   - 实现位置：`backend/eval/reporting.py`（`build_environment_fingerprint` / `_git_commit`）。
-  - `eval_set_sha256` 对评测 xlsx 做哈希，保证「报告对应哪份评测集」可追溯；`git_commit` 从 `GIT_COMMIT` 环境变量或 git 读取，CI 里由 runner 注入。
+  - `eval_set_sha256` 对评测 xlsx 做哈希，保证「报告对应哪份评测集」可追溯；`git_commit` 优先读取可选的 `GIT_COMMIT` 环境变量，否则从 runner 的 Git 工作区读取当前提交 SHA。
 - **放弃的替代方案**：*只记时间戳*（无法复现）——放弃；*靠人工记录*（易漏易错）——放弃。
 - **失效条件**：若评测集用数据库表而非 xlsx 管理，`sha256(xlsx)` 失效，需改为对评测集内容做规范化哈希。
 
