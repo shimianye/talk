@@ -9,7 +9,7 @@
 [![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL%20%2B%20pgvector-336791)](https://www.postgresql.org)
 [![Alembic](https://img.shields.io/badge/Migrations-Alembic-orange)](https://alembic.sqlalchemy.org/)
 
-> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 45 个测试 → 100 条 Mock 评测 → 报告归档」，当前为绿色（[Run #34005144560](https://github.com/shimianye/talk/actions/runs/34005144560)）。
+> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 45 个测试 → 100 条 Mock 评测 → 报告归档」，当前为绿色（最新 [Run #34005899216](https://github.com/shimianye/talk/actions/runs/34005899216)）。
 
 ---
 
@@ -92,7 +92,8 @@ flowchart TB
         C5[artifact eval-report]
     end
 
-    UC & AC & AD --> FE1 --> FE2
+    UC & AC & AD --> FE1
+    FE1 --> FE2
     FE2 -->|HTTP + SSE| R2
     R1 & R3 & R4 & R5 --> AG
     R2 --> AG
@@ -115,7 +116,8 @@ flowchart TB
     E3 --> T2
     E1 -. 报告落盘 .-> E4
 
-    C3 -. 依赖 .-> C1 & C2
+    C3 -. 依赖 .-> C1
+    C3 -. 依赖 .-> C2
     C4 --> E1
     C4 -. 上传 30 天 .-> C5
 
