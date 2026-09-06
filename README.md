@@ -315,7 +315,14 @@ ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 
 ## 🧠 技术决策文档
 
-架构、RAG、安全、评测方法论四章的「为什么选 / 放弃了什么 / 何时失效」正在整理，完成后置于 `docs/decisions/`。
+架构、RAG、安全、评测方法论四章的「为什么选 / 放弃了什么 / 何时失效」已整理于 `docs/decisions/`，每条决策标注状态（已采纳 / 待真实 LLM 验证）。
+
+| 章节 | 主题 |
+|------|------|
+| [第 1 章](docs/decisions/01-architecture.md) | 架构：LangGraph 状态图、LLM 抽象与 Mock 优先、工具注册表与 RBAC、Alembic 迁移、分层与执行上限 |
+| [第 2 章](docs/decisions/02-rag.md) | RAG：混合检索、零依赖 BM25、Mock/远程 Embedding、中文分词、切分与降级 |
+| [第 3 章](docs/decisions/03-security.md) | 安全：双层护栏、PII 脱敏、Owner 隔离、写操作确认、RBAC/JWT、审计 |
+| [第 4 章](docs/decisions/04-evaluation.md) | 评测方法论：独立评测库、身份映射、Owner 对偶探针、环境指纹、双格式报告、指标口径 |
 
 ---
 
