@@ -17,6 +17,8 @@ export default function Chat() {
   const abortRef = useRef<AbortController | null>(null)
   const tokenBufferRef = useRef('')
   const drainTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const streamDoneRef = useRef(false)
+  const finishLoadingRef = useRef<(() => void) | null>(null)
 
   useEffect(
     () => () => {
@@ -35,6 +37,8 @@ export default function Chat() {
     }
     if (tokenBufferRef.current) {
       drainTimerRef.current = setTimeout(drainTokenQueue, 30)
+    } else if (streamDoneRef.current) {
+      finishLoadingRef.current?.()
     }
   }
 
@@ -55,6 +59,8 @@ export default function Chat() {
     const controller = new AbortController()
     abortRef.current = controller
     tokenBufferRef.current = ''
+    streamDoneRef.current = false
+    finishLoadingRef.current = () => setLoading(false)
     if (drainTimerRef.current !== null) clearTimeout(drainTimerRef.current)
     drainTimerRef.current = null
     let started = false
@@ -82,6 +88,8 @@ export default function Chat() {
           }
         },
       }, controller.signal)
+      streamDoneRef.current = true
+      if (!tokenBufferRef.current && drainTimerRef.current === null) finishLoadingRef.current?.()
     } catch (err) {
       if ((err as Error).name !== 'AbortError') {
         if (!started) {
@@ -95,10 +103,13 @@ export default function Chat() {
         } else if (!completed) {
           setMessages((m) => [...m, { sender: 'agent', content: `流式连接出错：${(err as Error).message}` }])
         }
+        setLoading(false)
+      } else {
+        setLoading(false)
       }
     } finally {
       if (abortRef.current === controller) abortRef.current = null
-      setLoading(false)
+      if (streamDoneRef.current && !tokenBufferRef.current && drainTimerRef.current === null) finishLoadingRef.current?.()
     }
   }
 
