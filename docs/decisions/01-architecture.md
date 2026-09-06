@@ -55,7 +55,7 @@
 - **背景**：`create_all` 只在「表不存在时建表」，无法处理已有库的列变更，团队协作和上线变更都无法追踪。
 - **决策**：全量走 Alembic 迁移链，CI 里做 `upgrade head` + `downgrade base` 的往返校验（T-A 交付）。模型导入集中在 `models/__init__.py` 供 autogenerate 识别。
   - 实现位置：`backend/alembic/`、`backend/app/models/__init__.py`、`backend/scripts/check_migration_drift.py`（迁移漂移校验）。
-  - 规模：23 张业务表 + 1 张 `alembic_version`，15 个外键约束，1 条初始迁移（T-A 为真实 autogenerate）。
+  - 规模：24 张表（23 业务表 + T-B 新增的 `sync_manifests`）+ 1 张 `alembic_version`，15 个外键约束，1 条初始迁移（T-A 为真实 autogenerate）。
 - **放弃的替代方案**：
   - *`metadata.create_all`*：零迁移历史，不可回滚。放弃。
   - *手工 SQL 脚本迁移*：失去 autogenerate 的模型↔迁移一致性校验。放弃。

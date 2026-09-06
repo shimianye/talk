@@ -71,7 +71,7 @@ flowchart TB
     end
 
     subgraph DATA["数据层"]
-        DB_MAIN[(主库 phone_commerce<br/>23 张业务表 + Alembic 版本表)]
+        DB_MAIN[(主库 phone_commerce<br/>24 张业务表 + Alembic 版本表)]
         DB_EVAL[(评测库 phone_commerce_eval<br/>独立库 · 基线表只读保护)]
         REDIS[(Redis<br/>会话 / 缓存 / 限流)]
         VEC[[pgvector<br/>bge-m3 1024 维]]
@@ -159,7 +159,7 @@ phone-commerce-agent/
 │   │   ├── api/routes/      # 19 条路由（auth/chat/session/admin/eval/health）
 │   │   ├── core/            # llm / tools / agent / rag / security
 │   │   ├── db/              # SQLAlchemy 异步会话
-│   │   ├── models/          # 23 张业务表 ORM
+│   │   ├── models/          # 24 张业务表 ORM
 │   │   ├── schemas/         # Pydantic 模型
 │   │   └── services/        # seed / kb 同步、数据库 bootstrap
 │   ├── alembic/             # 迁移版本
@@ -273,7 +273,7 @@ ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 | 阶段 | 内容 | 状态 | commit |
 |------|------|------|--------|
 | P0 | 工程骨架（Compose / 配置 / 健康检查 / 前后端骨架） | ✅ | `cd02b23` |
-| P1 | 数据层（23 张表 ORM） | ✅ | — |
+| P1 | 数据层（24 张表 ORM） | ✅ | — |
 | P2 | 真实 Alembic 初始迁移（替换 create_all） | ✅ | `0e050d6` |
 | P3 | 幂等种子 + 知识库按内容版本更新 | ✅ | `633d03a` |
 | P4 | 独立评测库 + bootstrap 参数化 | ✅ | `3c09783` |
