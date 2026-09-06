@@ -44,6 +44,89 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>
 }
 
+export interface ChatStreamMeta {
+  session_id: string
+  pending_confirmation: boolean
+  handoff_required: boolean
+  intent?: string
+}
+
+export interface ChatStreamHandlers {
+  onMeta?: (meta: ChatStreamMeta) => void
+  onToken?: (token: string) => void
+  onMessageEnd?: (answer: string) => void
+}
+
+/** 消费 POST SSE 聊天流；解析跨网络分块的标准 SSE 帧。 */
+async function chatStream(
+  message: string,
+  sessionId: string | undefined,
+  handlers: ChatStreamHandlers,
+  signal: AbortSignal,
+): Promise<void> {
+  const token = getToken()
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers.Authorization = `Bearer ${token}`
+  const res = await fetch(`${API_BASE}/api/v1/chat/stream`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ message, session_id: sessionId }),
+    signal,
+  })
+  if (res.status === 401) {
+    clearToken()
+    window.location.href = '/login'
+    throw new Error('未登录')
+  }
+  if (!res.ok || !res.body) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error((body as { detail?: string }).detail || `请求失败 ${res.status}`)
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let event = ''
+  let dataLines: string[] = []
+  let finished = false
+
+  const processFrame = (frame: string): void => {
+    for (const line of frame.split(/\r?\n/)) {
+      if (!line || line.startsWith(':')) continue
+      if (line.startsWith('event:')) event = line.slice(6).trim()
+      else if (line.startsWith('data:')) dataLines.push(line.slice(5).trimStart())
+    }
+    if (!event || dataLines.length === 0) {
+      event = ''
+      dataLines = []
+      return
+    }
+    const payload = JSON.parse(dataLines.join('\n')) as Record<string, unknown>
+    if (event === 'message_start') handlers.onMeta?.(payload as unknown as ChatStreamMeta)
+    else if (event === 'token') handlers.onToken?.(String(payload.token ?? ''))
+    else if (event === 'message_end') handlers.onMessageEnd?.(String(payload.answer ?? ''))
+    else if (event === 'done') finished = true
+    event = ''
+    dataLines = []
+  }
+
+  try {
+    while (!finished) {
+      const { value, done } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const frames = buffer.split(/\r?\n\r?\n/)
+      buffer = frames.pop() ?? ''
+      frames.forEach(processFrame)
+    }
+    buffer += decoder.decode()
+    if (buffer.trim()) processFrame(buffer)
+    if (!finished) throw new Error('流式响应未正常结束')
+  } finally {
+    await reader.cancel().catch(() => undefined)
+  }
+}
+
 export const api = {
   login: (username: string, password: string) =>
     request<{ access_token: string; user_id: string; display_name: string; role: string }>(
@@ -57,7 +140,8 @@ export const api = {
       pending_confirmation: boolean
       handoff_required: boolean
       intent?: string
-    }>('/api/v1/chat', { method: 'POST', body: JSON.stringify({ message, session_id: sessionId }) }),
+      }>('/api/v1/chat', { method: 'POST', body: JSON.stringify({ message, session_id: sessionId }) }),
+  chatStream,
   sessions: () => request<{ sessions: unknown[] }>('/api/v1/sessions'),
   // 管理
   conversations: (status?: string) =>
