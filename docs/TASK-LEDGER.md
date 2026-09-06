@@ -24,7 +24,7 @@
 |----|------|--------|------|------|
 | T-H | 前端 SSE 流式消费（改 `frontend/src/api.ts`） | Codex | 已完成 | 阶段一完成 | 方案 A 已实现；含跨 chunk SSE 解析、AbortController 清理、按帧 token 缓冲、done 收尾和同步降级；后端 SSE/LLM 不改；commit `cacd648`；WorkBuddy 只读复核通过（8 项清单全绿，3 个非阻断瑕疵见 `outputs/T-H复核-cacd648.md`） |
 | T-I | 聊天页重截图 | 夜灯 | 已完成 | T-H | 单帧完整答案；`02-consumer-chat.png` 已更新（1280×1617，<1MB），内容含登录态、问题与完整客服回复；WorkBuddy 只读复核通过（4 项全绿） |
-| T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 待复核 | T-H | Mock 基线已完成：20 虚拟用户、1～3 秒思考间隔、60 秒、210 次 chat、0 失败，P50 3100ms / P95 5800ms / RPS 3.56；报告已由 WorkBuddy 核对，待隔离数据库清理与最终复核 |
+| T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 已完成 | T-H | Mock 基线已完成并由 WorkBuddy 复核：20 虚拟用户、1～3 秒思考间隔、60 秒、210 次 chat、0 失败，P50 3100ms / P95 5800ms / RPS 3.56；开发库已按边界清理 4 张运行态表，业务基线保持 products=9 / orders=50 / knowledge_documents=20 / evaluation_dataset=100 |
 | T-K | 1 分钟演示视频 | 待认领 | 待认领 | T-H |
 | T-L | 技术决策文档 v2（补 SSE 章节） | 待认领（建议 夜灯） | 待认领 | T-H |
 | T-M | 云部署 demo | 待认领 | 待认领 | T-J |
@@ -41,3 +41,4 @@
 | T-E | GitHub Actions CI（真实 Run 34005144560 success） | Codex | 2026-09-06 |
 | T-F | README 升级（架构图 / 指标双栏 / 4 张截图 / 数字修正） | 夜灯 | 2026-09-06 |
 | T-G | 技术决策文档 v1（架构 / RAG / 安全 / 评测四章 27 条决策） | 夜灯 | 2026-09-06 |
+| T-J | 并发压测（20 虚拟用户 P50/P95） | Codex | 2026-09-06 |
