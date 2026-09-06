@@ -13,6 +13,7 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [sessionId, setSessionId] = useState<string | undefined>()
   const [loading, setLoading] = useState(false)
+  const [streamStarted, setStreamStarted] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const tokenBufferRef = useRef('')
   const frameRef = useRef<number | null>(null)
@@ -38,15 +39,16 @@ export default function Chat() {
     const controller = new AbortController()
     abortRef.current = controller
     let started = false
-    let assistantIndex = -1
+    setStreamStarted(false)
+    let completed = false
     try {
       await api.chatStream(text, sessionId, {
         onMeta: (meta) => {
           started = true
+          setStreamStarted(true)
           setSessionId(meta.session_id)
           setMessages((m) => {
-            assistantIndex = m.length
-            assistantIndexRef.current = assistantIndex
+            assistantIndexRef.current = m.length
             return [...m, { sender: 'agent', content: '', handoff: meta.handoff_required, pendingConfirmation: meta.pending_confirmation }]
           })
         },
@@ -59,6 +61,7 @@ export default function Chat() {
             cancelAnimationFrame(frameRef.current)
             flushTokens()
           }
+          completed = true
           setMessages((m) => m.map((msg, i) => (i === assistantIndexRef.current && !msg.content ? { ...msg, content: answer } : msg)))
         },
       }, controller.signal)
@@ -72,7 +75,7 @@ export default function Chat() {
           } catch (fallbackErr) {
             setMessages((m) => [...m, { sender: 'agent', content: `出错了：${(fallbackErr as Error).message}` }])
           }
-        } else {
+        } else if (!completed) {
           setMessages((m) => [...m, { sender: 'agent', content: `流式连接出错：${(err as Error).message}` }])
         }
       }
@@ -108,7 +111,7 @@ export default function Chat() {
             </div>
           </div>
         ))}
-        {loading && (
+        {loading && !streamStarted && (
           <div className="msg agent">
             <div className="bubble">正在思考…</div>
           </div>
