@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { api } from '../api'
+import { api, type DecisionSummary } from '../api'
 
 interface Msg {
   sender: 'user' | 'agent'
   content: string
   handoff?: boolean
   pendingConfirmation?: boolean
+  decision?: DecisionSummary
 }
 
 export default function Chat() {
@@ -74,7 +75,13 @@ export default function Chat() {
           setSessionId(meta.session_id)
           setMessages((m) => {
             assistantIndexRef.current = m.length
-            return [...m, { sender: 'agent', content: '', handoff: meta.handoff_required, pendingConfirmation: meta.pending_confirmation }]
+            return [...m, {
+              sender: 'agent',
+              content: '',
+              handoff: meta.handoff_required,
+              pendingConfirmation: meta.pending_confirmation,
+              decision: meta.decision_summary,
+            }]
           })
         },
         onToken: (token) => {
@@ -96,7 +103,13 @@ export default function Chat() {
           try {
             const r = await api.chat(text, sessionId)
             setSessionId(r.session_id)
-            setMessages((m) => [...m, { sender: 'agent', content: r.answer, handoff: r.handoff_required }])
+            setMessages((m) => [...m, {
+              sender: 'agent',
+              content: r.answer,
+              handoff: r.handoff_required,
+              pendingConfirmation: r.pending_confirmation,
+              decision: r.decision_summary,
+            }])
           } catch (fallbackErr) {
             setMessages((m) => [...m, { sender: 'agent', content: `出错了：${(fallbackErr as Error).message}` }])
           }
@@ -136,6 +149,33 @@ export default function Chat() {
               {m.content}
               {m.handoff && <span className="tag">已转人工</span>}
               {m.pendingConfirmation && <span className="tag">等待确认</span>}
+              {m.sender === 'agent' && m.decision && (
+                <details className="decision">
+                  <summary>查看本次 AI 决策依据</summary>
+                  <div className="decision-grid">
+                    <span>识别意图</span><strong>{m.decision.intent_label}</strong>
+                    <span>运行模式</span><strong>{m.decision.mode}</strong>
+                    <span>执行动作</span>
+                    <strong>
+                      {m.decision.actions.length
+                        ? m.decision.actions.map((a) => `${a.label}${a.success ? '' : '（未成功）'}`).join('、')
+                        : '未调用业务工具'}
+                    </strong>
+                    <span>安全状态</span>
+                    <strong>
+                      {m.decision.safety.length
+                        ? m.decision.safety.map((s) => s.label).join('、')
+                        : '未触发安全规则'}
+                    </strong>
+                  </div>
+                  {m.decision.sources.length > 0 && (
+                    <div className="decision-sources">
+                      来源：{m.decision.sources.map((s) => `${s.title}${s.version ? `（${s.version}）` : ''}`).join('、')}
+                    </div>
+                  )}
+                  <div className="trace-id">TRACE {m.decision.trace_id.slice(0, 12)}</div>
+                </details>
+              )}
             </div>
           </div>
         ))}

@@ -1,6 +1,6 @@
 # 📱 手机电商智能客服 Agent
 
-> 基于 **LangGraph + DeepSeek Tool Calling** 的手机电商智能客服 Agent，面向手机零售场景，覆盖商品咨询、推荐、订单物流查询、售后协作与人工接管，支持权限校验、审计追踪与自动化评测，本地 Docker Compose 一键可复现。
+> 基于 **LangGraph + DeepSeek Tool Calling** 的手机电商智能客服 Agent，面向手机零售场景，覆盖商品咨询、推荐、订单物流查询、售后协作与人工接管。每次回答可展示经过白名单过滤的意图、工具、来源与安全状态，并用固定评测切片区分 Mock 链路基线和真实模型能力。
 
 [![CI](https://github.com/shimianye/talk/actions/workflows/ci.yml/badge.svg)](https://github.com/shimianye/talk/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB)](https://python.org)
@@ -9,7 +9,7 @@
 [![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL%20%2B%20pgvector-336791)](https://www.postgresql.org)
 [![Alembic](https://img.shields.io/badge/Migrations-Alembic-orange)](https://alembic.sqlalchemy.org/)
 
-> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 45 个测试 → 100 条 Mock 评测 → 报告归档」，当前为绿色（最新 [Run #34005899216](https://github.com/shimianye/talk/actions/runs/34005899216)）。
+> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 47 个测试 → 100 条 Mock 评测 → 报告归档」；新增用例已在本地通过，远程徽章仍对应当前 `origin/main` 的最近成功运行。
 
 ---
 
@@ -22,6 +22,7 @@
 - **管理端**：商品、知识库、用户权限、评测与审计管理。
 - **可复现**：Docker Compose 一键启动；无 Key 时用 Mock LLM 跑通全链路。
 - **可验证**：结构变更走 Alembic 版本管理，测试与评测接入 GitHub Actions，评测报告带环境指纹可追溯。
+- **可解释**：消费者可展开查看本轮意图、实际工具、知识来源和安全状态；只展示审计事实，不暴露内部 Prompt、参数、业务数据或思维过程。
 
 完整设计见 `docs/superpowers/specs/2026-09-03-phone-commerce-agent-design.md`。
 
@@ -164,7 +165,7 @@ phone-commerce-agent/
 │   │   └── services/        # seed / kb 同步、数据库 bootstrap
 │   ├── alembic/             # 迁移版本
 │   ├── eval/                # 评测引擎（独立库、身份映射、报告）
-│   ├── tests/               # 45 个测试（含 integration/）
+│   ├── tests/               # 47 个通过测试 + 3 个按环境跳过的数据库集成测试
 │   └── scripts/             # bootstrap.py / init_db.py
 ├── frontend/                # Vite + React + TS 三端 UI
 ├── data/
@@ -221,11 +222,14 @@ EMBEDDING_MODEL=bge-m3
 ## 🧪 测试与评测
 
 ```bash
-# 单元测试 + 集成测试（45 个，离线可跑）
+# 单元测试 + 集成测试（47 个通过，3 个数据库集成测试按环境跳过）
 cd backend && python -m pytest -q
 
 # 自动化评测（100 条，Mock 模式离线可跑）
 cd backend && python -m eval.run_eval
+
+# 固定 24 条求职评测切片（真实模型最多执行一轮）
+cd backend && python -m eval.run_eval --job-slice
 
 # 等价 CI 的本地跑法（需显式指定两个破坏性测试库 URL）
 ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
@@ -310,6 +314,22 @@ ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 | 消费者聊天页 | `docs/screenshots/02-consumer-chat.png` |
 | 评测报告（Markdown） | `docs/screenshots/03-eval-report-md.png` |
 | GitHub Actions 绿徽章 | `docs/screenshots/04-ci-green-badge.png` |
+
+---
+
+## 🔎 AI 决策依据与求职评测切片
+
+聊天 API 的 `decision_summary` 只通过白名单返回：
+
+- 意图中文标签；
+- 实际执行的工具名称与成功状态；
+- 可公开的知识文档标题与版本；
+- 已触发的安全规则和 Trace ID；
+- 当前 LLM 模式。
+
+工具参数、工具结果、用户身份、订单信息、内部 Prompt 和 Chain-of-Thought 不会进入消费者响应。Agent Trace 中的工具计数也改为基于真实执行结果生成，避免执行后工具列表被清空造成错误展示。
+
+`backend/eval/job_slice.py` 在真实模型运行前固定了 24 个样本 ID，覆盖商品参数、对比、推荐、政策、订单、库存、投诉、拒答和转人工。报告同时记录切片 ID 与内容哈希，不能根据结果临时换题。
 
 ---
 

@@ -21,6 +21,7 @@ from app.core.tools.base import ToolContext
 from app.services.seed_sync import sync_seed_data
 from eval.database import create_eval_engine, reset_eval_runtime_state, verify_eval_connection
 from eval.identity import identity_for_item, owner_isolation_pair
+from eval.job_slice import JOB_SIGNAL_EVAL_IDS, job_slice_hash, select_job_slice
 from eval.reporting import build_environment_fingerprint, persist_report
 
 EVAL_XLSX = Path(__file__).resolve().parents[2] / "data" / "seed" / "evaluation_dataset.xlsx"
@@ -104,9 +105,17 @@ async def _run_owner_isolation_probe(session) -> dict[str, int]:
     }
 
 
-async def run_evaluation(db: Any = None, limit: int | None = None, *, output_dir: Path | None = None) -> dict[str, Any]:
+async def run_evaluation(
+    db: Any = None,
+    limit: int | None = None,
+    *,
+    output_dir: Path | None = None,
+    job_slice: bool = False,
+) -> dict[str, Any]:
     """在评测库运行 Agent 图并落盘双格式报告；传入 db 仅用于受控测试。"""
     items = load_eval_items()
+    if job_slice:
+        items = select_job_slice(items)
     if limit is not None:
         items = items[:limit]
     engine = None
@@ -144,6 +153,11 @@ async def run_evaluation(db: Any = None, limit: int | None = None, *, output_dir
         result["environment"] = build_environment_fingerprint(
             EVAL_XLSX, database_name, str(alembic_revision or "unknown")
         )
+        result["environment"].update({
+            "eval_scope": "job-slice-24" if job_slice else "full",
+            "eval_item_ids": list(JOB_SIGNAL_EVAL_IDS) if job_slice else "all",
+            "eval_slice_hash": job_slice_hash(items),
+        })
         result["report_paths"] = [str(path) for path in persist_report(result, output_dir or REPORT_DIR)]
         return result
     finally:
@@ -181,10 +195,11 @@ async def main() -> None:
     """CLI 入口：解析范围、输出位置和错误退出策略。"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--job-slice", action="store_true", help="运行固定的 24 条求职评测切片")
     parser.add_argument("--output-dir", type=Path, default=REPORT_DIR)
     parser.add_argument("--fail-on-errors", action="store_true")
     args = parser.parse_args()
-    result = await run_evaluation(limit=args.limit, output_dir=args.output_dir)
+    result = await run_evaluation(limit=args.limit, output_dir=args.output_dir, job_slice=args.job_slice)
     print(f"评测完成：{result['succeeded']}/{result['total']} 成功，报告：{result['report_paths']}")
     if args.fail_on_errors and result["failed"]:
         raise SystemExit(1)

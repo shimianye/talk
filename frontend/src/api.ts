@@ -49,6 +49,18 @@ export interface ChatStreamMeta {
   pending_confirmation: boolean
   handoff_required: boolean
   intent?: string
+  decision_summary?: DecisionSummary
+}
+
+export interface DecisionSummary {
+  trace_id: string
+  intent: string
+  intent_label: string
+  actions: Array<{ name: string; label: string; success: boolean }>
+  sources: Array<{ document_id: string; title: string; version?: string }>
+  safety: Array<{ code: string; label: string }>
+  handoff_required: boolean
+  mode: string
 }
 
 export interface ChatStreamHandlers {
@@ -140,6 +152,7 @@ export const api = {
       pending_confirmation: boolean
       handoff_required: boolean
       intent?: string
+      decision_summary?: DecisionSummary
       }>('/api/v1/chat', { method: 'POST', body: JSON.stringify({ message, session_id: sessionId }) }),
   chatStream,
   sessions: () => request<{ sessions: unknown[] }>('/api/v1/sessions'),
@@ -171,5 +184,13 @@ export const api = {
   knowledge: () => request<{ documents: unknown[] }>('/api/v1/admin/knowledge'),
   traces: () => request<{ traces: unknown[] }>('/api/v1/admin/traces'),
   audit: () => request<{ logs: unknown[] }>('/api/v1/admin/audit'),
-  runEval: () => request<{ metrics: Record<string, unknown> }>('/api/v1/eval/run', { method: 'POST' }),
+  runEval: () => request<{
+    total: number
+    succeeded: number
+    failed: number
+    metrics: Record<string, unknown>
+    environment?: Record<string, unknown>
+    errors?: Array<Record<string, unknown>>
+    report_paths?: string[]
+  }>('/api/v1/eval/run', { method: 'POST' }),
 }

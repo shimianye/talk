@@ -14,6 +14,7 @@ from app.core.cache import redis_client
 from app.core.security.audit import write_audit
 from app.config import settings
 from app.models import Conversation, Message, User
+from app.services.decision_summary import build_decision_summary
 
 logger = logging.getLogger(__name__)
 
@@ -176,6 +177,7 @@ async def handle_chat(
         "handoff_required": state.get("handoff_required", False),
         "guardrail_flags": state.get("guardrail_flags", []),
         "intent": state.get("intent"),
+        "decision_summary": build_decision_summary(state),
         "mode": {
             "llm_provider": settings.llm_provider,
             "embedding_provider": settings.embedding_provider,

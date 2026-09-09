@@ -63,3 +63,24 @@ async def test_write_tool_confirmation_gating():
     out = await tool_execution(state)
     assert out.get("pending_confirmation") is True
     assert out.get("tool_results") == []  # 未确认绝不执行
+
+
+async def test_knowledge_sources_are_collected_after_redaction():
+    from app.core.agent.nodes import validate_tool_result
+
+    state = {
+        "tool_results": [{
+            "tool": "search_knowledge_base",
+            "success": True,
+            "data": {
+                "sources": [{"document_id": "doc-1", "title": "保修政策", "version": "v1"}],
+                "chunks": [{"text": "客服电话 13812345678"}],
+            },
+        }],
+        "sources": [],
+        "guardrail_flags": [],
+    }
+    result = await validate_tool_result(state)
+    assert result["sources"] == [{"document_id": "doc-1", "title": "保修政策", "version": "v1"}]
+    assert "pii_in_tool_result" in result["guardrail_flags"]
+    assert "13812345678" not in str(result["tool_results"])

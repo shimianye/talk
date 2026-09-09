@@ -225,6 +225,12 @@ async def validate_tool_result(state: AgentState) -> AgentState:
                 state["guardrail_flags"] = list(state.get("guardrail_flags", [])) + [
                     "pii_in_tool_result"
                 ]
+            if r.get("tool") == "search_knowledge_base" and isinstance(r.get("data"), dict):
+                known = {s.get("document_id") for s in state.get("sources", [])}
+                for source in r["data"].get("sources", []) or []:
+                    if isinstance(source, dict) and source.get("document_id") not in known:
+                        state.setdefault("sources", []).append(source)
+                        known.add(source.get("document_id"))
     return state
 
 
@@ -270,7 +276,11 @@ async def save_trace(state: AgentState) -> AgentState:
         intent=state.get("intent"),
         entities=state.get("entities"),
         plan=state.get("plan"),
-        tool_calls=state.get("tool_calls") or [],
+        tool_calls=[
+            {"name": result.get("tool"), "success": bool(result.get("success"))}
+            for result in state.get("tool_results", [])
+            if result.get("tool")
+        ],
         tool_results=state.get("tool_results") or [],
         sources=state.get("sources") or [],
         guardrail_flags=state.get("guardrail_flags") or [],

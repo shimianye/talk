@@ -70,14 +70,40 @@ function Knowledge() {
 }
 
 function Eval() {
-  const [metrics, setMetrics] = useState<Record<string, unknown> | null>(null)
+  const [result, setResult] = useState<Awaited<ReturnType<typeof api.runEval>> | null>(null)
   const [running, setRunning] = useState(false)
+  const [error, setError] = useState('')
+
+  const labels: Record<string, string> = {
+    '意图准确率': '意图路由',
+    '工具选择准确率': '工具选择',
+    '转人工准确率': '转人工',
+    '拒答/拦截率': '安全拦截',
+    '答案产出率': '答案产出',
+    'P50延迟(ms)': 'P50 延迟',
+    'P95延迟(ms)': 'P95 延迟',
+    '平均工具调用数': '平均工具数',
+  }
+
+  function displayMetric(key: string, value: unknown) {
+    if (value === null || value === undefined) return '尚未评测'
+    if (key.includes('率')) return `${(Number(value) * 100).toFixed(1)}%`
+    if (key.includes('延迟')) return `${Number(value).toLocaleString()} ms`
+    return String(value)
+  }
+
+  function needsAttention(key: string, value: unknown) {
+    return key.includes('率') && typeof value === 'number' && value < 0.7
+  }
 
   async function run() {
     setRunning(true)
+    setError('')
     try {
       const r = await api.runEval()
-      setMetrics(r.metrics)
+      setResult(r)
+    } catch (err) {
+      setError((err as Error).message)
     } finally {
       setRunning(false)
     }
@@ -86,15 +112,27 @@ function Eval() {
   return (
     <div>
       <button onClick={run} disabled={running}>{running ? '评测中…' : '运行评测（100 条）'}</button>
-      {metrics && (
-        <table className="table" style={{ marginTop: 16 }}>
-          <thead><tr><th>指标</th><th>值</th></tr></thead>
-          <tbody>
-            {Object.entries(metrics).map(([k, v]) => (
-              <tr key={k}><td>{k}</td><td>{String(v)}</td></tr>
+      <p className="eval-note">Mock 与真实模型必须分开解读；缺失值表示尚未评测，不按 0 处理。</p>
+      {error && <p className="eval-error">评测失败：{error}</p>}
+      {result && (
+        <>
+          <div className="eval-summary">
+            <strong>{String(result.environment?.llm_provider ?? 'unknown').toUpperCase()}</strong>
+            <span>样本 {result.total}</span>
+            <span>成功 {result.succeeded}</span>
+            <span>异常 {result.failed}</span>
+          </div>
+          <div className="metric-grid">
+            {Object.entries(result.metrics).map(([k, v]) => (
+              <article key={k} className={`metric-card ${needsAttention(k, v) ? 'attention' : ''}`}>
+                <span>{labels[k] ?? k}</span>
+                <strong>{displayMetric(k, v)}</strong>
+                {needsAttention(k, v) && <small>需要关注失败样本</small>}
+              </article>
             ))}
-          </tbody>
-        </table>
+          </div>
+          <p className="eval-note">指标使用固定分母；详细失败样本与环境指纹已写入双格式评测报告。</p>
+        </>
       )}
     </div>
   )
