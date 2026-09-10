@@ -100,6 +100,23 @@ async def sync_database(
         await engine.dispose()
 
 
+async def _bootstrap_database_contents(
+    main_url: str,
+    eval_url: str,
+    docs_dir: Path,
+    embedding: EmbeddingProvider,
+    *,
+    data_dir: Path = DEFAULT_DATA_DIR,
+) -> dict[str, Any]:
+    """在同一事件循环中创建、迁移并同步主库与评测库。"""
+    created = await ensure_database_exists(main_url, eval_url)
+    migrate_database(main_url)
+    migrate_database(eval_url)
+    main_stats = await sync_database(main_url, docs_dir, embedding, data_dir=data_dir)
+    eval_stats = await sync_database(eval_url, docs_dir, embedding, data_dir=data_dir)
+    return {"eval_database_created": created, "main": main_stats, "eval": eval_stats}
+
+
 def bootstrap_databases(
     main_url: str,
     eval_url: str,
@@ -110,13 +127,12 @@ def bootstrap_databases(
 ) -> dict[str, Any]:
     """创建评测库，迁移双库，并分别执行幂等内容同步。"""
     validate_database_pair(main_url, eval_url)
-    created = asyncio.run(ensure_database_exists(main_url, eval_url))
-    migrate_database(main_url)
-    migrate_database(eval_url)
-    main_stats = asyncio.run(
-        sync_database(main_url, docs_dir, embedding, data_dir=data_dir)
+    return asyncio.run(
+        _bootstrap_database_contents(
+            main_url,
+            eval_url,
+            docs_dir,
+            embedding,
+            data_dir=data_dir,
+        )
     )
-    eval_stats = asyncio.run(
-        sync_database(eval_url, docs_dir, embedding, data_dir=data_dir)
-    )
-    return {"eval_database_created": created, "main": main_stats, "eval": eval_stats}

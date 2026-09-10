@@ -4,7 +4,7 @@
 
 **Goal:** Make main and evaluation database bootstrap share one event loop so a real `bge-m3` HTTP client can safely rebuild both vector stores, then publish a verified real-stack evaluation.
 
-**Architecture:** Keep Alembic migrations in the synchronous entry point, but move all asynchronous database work into `_bootstrap_database_contents`, invoked by one `asyncio.run`. Preserve the public `bootstrap_databases` signature and result shape.
+**Architecture:** Move the complete initialization sequence into `_bootstrap_database_contents`, invoked by one `asyncio.run`: ensure the evaluation database exists, synchronously migrate both databases, then asynchronously sync both. Preserve the public `bootstrap_databases` signature and result shape.
 
 **Tech Stack:** Python 3.12, asyncio, httpx, SQLAlchemy async, PostgreSQL/pgvector, Ollama `bge-m3`, DeepSeek Chat, pytest, Docker Compose.
 
@@ -32,7 +32,7 @@
 
 - [ ] **Step 1: Write the failing unit test**
 
-Add a monkeypatched test that records `id(asyncio.get_running_loop())` in `ensure_database_exists` and both `sync_database` calls, invokes `bootstrap_databases`, and asserts one unique loop ID plus call order `ensure, main, eval` and the unchanged result structure.
+Add a monkeypatched test that records `id(asyncio.get_running_loop())` in `ensure_database_exists` and both `sync_database` calls, invokes `bootstrap_databases`, and asserts one unique loop ID plus call order `ensure, migrate main, migrate eval, sync main, sync eval` and the unchanged result structure.
 
 - [ ] **Step 2: Run the focused test and verify failure**
 
@@ -42,7 +42,7 @@ Expected before implementation: failure because the three async operations run i
 
 - [ ] **Step 3: Implement the single-loop orchestration**
 
-Add `_bootstrap_database_contents` that awaits `ensure_database_exists`, then awaits `sync_database` for main and evaluation URLs in sequence. Change `bootstrap_databases` to migrate both databases first and call `asyncio.run(_bootstrap_database_contents(...))` exactly once.
+Add `_bootstrap_database_contents` that awaits `ensure_database_exists`, calls `migrate_database` for main and evaluation URLs, then awaits `sync_database` for both URLs in sequence. Change `bootstrap_databases` to call `asyncio.run(_bootstrap_database_contents(...))` exactly once.
 
 - [ ] **Step 4: Run focused and full regression tests**
 
