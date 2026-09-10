@@ -4,7 +4,7 @@
 
 **Goal:** Make main and evaluation database bootstrap share one event loop so a real `bge-m3` HTTP client can safely rebuild both vector stores, then publish a verified real-stack evaluation.
 
-**Architecture:** Move the complete initialization sequence into `_bootstrap_database_contents`, invoked by one `asyncio.run`: ensure the evaluation database exists, synchronously migrate both databases, then asynchronously sync both. Preserve the public `bootstrap_databases` signature and result shape.
+**Architecture:** Move the complete initialization sequence into `_bootstrap_database_contents`, invoked by one `asyncio.run`: ensure the evaluation database exists, run both Alembic migrations sequentially through `asyncio.to_thread` because Alembic owns an inner event loop, then asynchronously sync both databases on the main loop. Preserve the public `bootstrap_databases` signature and result shape.
 
 **Tech Stack:** Python 3.12, asyncio, httpx, SQLAlchemy async, PostgreSQL/pgvector, Ollama `bge-m3`, DeepSeek Chat, pytest, Docker Compose.
 
@@ -42,7 +42,7 @@ Expected before implementation: failure because the three async operations run i
 
 - [ ] **Step 3: Implement the single-loop orchestration**
 
-Add `_bootstrap_database_contents` that awaits `ensure_database_exists`, calls `migrate_database` for main and evaluation URLs, then awaits `sync_database` for both URLs in sequence. Change `bootstrap_databases` to call `asyncio.run(_bootstrap_database_contents(...))` exactly once.
+Add `_bootstrap_database_contents` that awaits `ensure_database_exists`, awaits `asyncio.to_thread(migrate_database, database_url)` for main and evaluation URLs, then awaits `sync_database` for both URLs in sequence. Change `bootstrap_databases` to call `asyncio.run(_bootstrap_database_contents(...))` exactly once.
 
 - [ ] **Step 4: Run focused and full regression tests**
 

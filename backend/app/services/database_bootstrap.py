@@ -110,8 +110,10 @@ async def _bootstrap_database_contents(
 ) -> dict[str, Any]:
     """在同一事件循环中创建、迁移并同步主库与评测库。"""
     created = await ensure_database_exists(main_url, eval_url)
-    migrate_database(main_url)
-    migrate_database(eval_url)
+    # Alembic 的异步 env 从同步入口内部调用 asyncio.run；放入工作线程，
+    # 避免与 bootstrap 主事件循环嵌套，同时保持两次迁移顺序执行。
+    await asyncio.to_thread(migrate_database, main_url)
+    await asyncio.to_thread(migrate_database, eval_url)
     main_stats = await sync_database(main_url, docs_dir, embedding, data_dir=data_dir)
     eval_stats = await sync_database(eval_url, docs_dir, embedding, data_dir=data_dir)
     return {"eval_database_created": created, "main": main_stats, "eval": eval_stats}

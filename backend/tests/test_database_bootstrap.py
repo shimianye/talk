@@ -47,6 +47,9 @@ def test_bootstrap_runs_all_async_database_work_in_one_event_loop(monkeypatch):
 
     def fake_migrate(database_url: str) -> None:
         calls.append(f"migrate:{database_url}")
+        # Alembic 的 async env 会从同步入口内部调用 asyncio.run；迁移必须在
+        # bootstrap 主事件循环之外的工作线程执行。
+        asyncio.run(asyncio.sleep(0))
 
     async def fake_ensure(main_url: str, eval_url: str) -> bool:
         calls.append("ensure")
