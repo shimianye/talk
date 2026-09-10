@@ -1,0 +1,1874 @@
+{
+  "total": 100,
+  "succeeded": 100,
+  "failed": 0,
+  "metrics": {
+    "意图准确率": 0.85,
+    "工具选择准确率": 0.2222,
+    "转人工准确率": 0.4,
+    "拒答/拦截率": 0.3333,
+    "答案产出率": 1.0,
+    "P50延迟(ms)": 3482.0,
+    "P95延迟(ms)": 6397.4,
+    "平均工具调用数": 1.39
+  },
+  "owner_isolation": {
+    "身份绑定样本数": 7,
+    "owner通过数": 1,
+    "non_owner拦截数": 1,
+    "混合错误数": 0
+  },
+  "errors": [],
+  "detail": [
+    {
+      "id": 1,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3767.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 2,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2530.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 3,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2503.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 4,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3344.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 5,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec",
+        "recommend_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3576.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 6,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2989.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 7,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3282.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 8,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1894.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 9,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2275.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 10,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2296.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 11,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2273.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 12,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3897.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 13,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3110.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 14,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2849.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 15,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3172.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 16,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2545.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 17,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2164.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 18,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2111.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 19,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2705.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 20,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3119.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 21,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3315.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 22,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2141.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 23,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3411.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 24,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2337.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 25,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3251.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 26,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1868.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 27,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3285.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 28,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2398.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 29,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2737.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 30,
+      "category": "商品参数",
+      "expected_intent": "product_spec",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4428.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 31,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3968.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 32,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4297.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 33,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec",
+        "recommend_products",
+        "query_price"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6994.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 34,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6105.3,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 35,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4823.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 36,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec",
+        "recommend_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5773.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 37,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5134.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 38,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6273.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 39,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5609.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 40,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6362.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 41,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5394.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 42,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6414.3,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 43,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6155.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 44,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4548.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 45,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec",
+        "recommend_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5864.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 46,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6131.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 47,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3647.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 48,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_price"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3237.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 49,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4868.7,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 50,
+      "category": "商品对比",
+      "expected_intent": "product_compare",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6066.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 51,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3482.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 52,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": true,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5079.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 53,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "search_knowledge_base",
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5575.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 54,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3654.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 55,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "compare_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6669.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 56,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5600.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 57,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "query_product_spec",
+        "query_price",
+        "query_inventory",
+        "recommend_products",
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 8449.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 58,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "product_compare",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_price",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4893.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 59,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base",
+        "recommend_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5583.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 60,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "search_knowledge_base",
+        "query_product_spec",
+        "query_price"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5952.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 61,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5859.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 62,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2297.2,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 63,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "compare_products",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5056.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 64,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3147.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 65,
+      "category": "购买推荐",
+      "expected_intent": "purchase_recommend",
+      "actual_intent": "purchase_recommend",
+      "expected_tool": "无",
+      "called_tools": [
+        "recommend_products",
+        "search_knowledge_base",
+        "query_product_spec"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 6397.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 66,
+      "category": "售后政策",
+      "expected_intent": "refund_policy",
+      "actual_intent": "refund_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3437.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 67,
+      "category": "售后政策",
+      "expected_intent": "warranty_policy",
+      "actual_intent": "warranty_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3619.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 68,
+      "category": "售后政策",
+      "expected_intent": "shipping_policy",
+      "actual_intent": "shipping_policy",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1320.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 69,
+      "category": "售后政策",
+      "expected_intent": "invoice_query",
+      "actual_intent": "invoice_query",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3809.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 70,
+      "category": "售后政策",
+      "expected_intent": "promotion_query",
+      "actual_intent": "promotion_query",
+      "expected_tool": "query_promotion",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4179.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 71,
+      "category": "售后政策",
+      "expected_intent": "refund_policy",
+      "actual_intent": "refund_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2845.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 72,
+      "category": "售后政策",
+      "expected_intent": "warranty_policy",
+      "actual_intent": "warranty_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3853.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 73,
+      "category": "售后政策",
+      "expected_intent": "shipping_policy",
+      "actual_intent": "after_sales_apply",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2703.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 74,
+      "category": "售后政策",
+      "expected_intent": "promotion_query",
+      "actual_intent": "refund_policy",
+      "expected_tool": "query_promotion",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3956.3,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 75,
+      "category": "售后政策",
+      "expected_intent": "warranty_policy",
+      "actual_intent": "warranty_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3762.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 76,
+      "category": "售后政策",
+      "expected_intent": "refund_policy",
+      "actual_intent": "refund_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3634.3,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 77,
+      "category": "售后政策",
+      "expected_intent": "promotion_query",
+      "actual_intent": "after_sales_apply",
+      "expected_tool": "query_promotion",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3922.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 78,
+      "category": "售后政策",
+      "expected_intent": "warranty_policy",
+      "actual_intent": "warranty_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3572.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 79,
+      "category": "售后政策",
+      "expected_intent": "refund_policy",
+      "actual_intent": "refund_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 5065.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 80,
+      "category": "售后政策",
+      "expected_intent": "invoice_query",
+      "actual_intent": "after_sales_apply",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4352.3,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 81,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "order_query",
+      "expected_tool": "query_order",
+      "called_tools": [
+        "query_logistics"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2465.5,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 82,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "order_query",
+      "expected_tool": "query_order",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1225.1,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 83,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "order_query",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "是",
+      "handoff": true,
+      "expected_route": "人工",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3613.8,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 84,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "order_query",
+      "expected_tool": "query_order",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2545.5,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 85,
+      "category": "订单物流",
+      "expected_intent": "inventory_query",
+      "actual_intent": "inventory_query",
+      "expected_tool": "query_inventory",
+      "called_tools": [
+        "query_inventory"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3007.5,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 86,
+      "category": "订单物流",
+      "expected_intent": "refund_policy",
+      "actual_intent": "refund_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 4212.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 87,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "shipping_policy",
+      "expected_tool": "query_order",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2201.5,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 88,
+      "category": "订单物流",
+      "expected_intent": "order_query",
+      "actual_intent": "order_query",
+      "expected_tool": "query_order",
+      "called_tools": [
+        "get_after_sales_case",
+        "query_order"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "API",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3133.8,
+      "rounds": 1,
+      "identity_bound": true
+    },
+    {
+      "id": 89,
+      "category": "订单物流",
+      "expected_intent": "shipping_policy",
+      "actual_intent": "shipping_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3426.8,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 90,
+      "category": "订单物流",
+      "expected_intent": "shipping_policy",
+      "actual_intent": "shipping_policy",
+      "expected_tool": "无",
+      "called_tools": [
+        "search_knowledge_base"
+      ],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 3640.0,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 91,
+      "category": "边界与投诉",
+      "expected_intent": "complaint",
+      "actual_intent": "escalation",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "是",
+      "handoff": false,
+      "expected_route": "人工",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2178.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 92,
+      "category": "边界与投诉",
+      "expected_intent": "complaint",
+      "actual_intent": "escalation",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "是",
+      "handoff": false,
+      "expected_route": "人工",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2133.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 93,
+      "category": "边界与投诉",
+      "expected_intent": "unknown",
+      "actual_intent": "unknown",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "拒答",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1716.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 94,
+      "category": "边界与投诉",
+      "expected_intent": "unknown",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "通用回复",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2274.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 95,
+      "category": "边界与投诉",
+      "expected_intent": "unknown",
+      "actual_intent": "product_spec",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "通用回复",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1380.6,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 96,
+      "category": "边界与投诉",
+      "expected_intent": "complaint",
+      "actual_intent": "complaint",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "是",
+      "handoff": false,
+      "expected_route": "人工",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1954.4,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 97,
+      "category": "边界与投诉",
+      "expected_intent": "store_info",
+      "actual_intent": "unknown",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "RAG",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2103.5,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 98,
+      "category": "边界与投诉",
+      "expected_intent": "unknown",
+      "actual_intent": "price_query",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "通用回复",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2198.1,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 99,
+      "category": "边界与投诉",
+      "expected_intent": "complaint",
+      "actual_intent": "complaint",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "是",
+      "handoff": true,
+      "expected_route": "人工",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 2409.9,
+      "rounds": 1,
+      "identity_bound": false
+    },
+    {
+      "id": 100,
+      "category": "边界与投诉",
+      "expected_intent": "greeting",
+      "actual_intent": "greeting",
+      "expected_tool": "无",
+      "called_tools": [],
+      "should_transfer": "否",
+      "handoff": false,
+      "expected_route": "通用回复",
+      "blocked": false,
+      "has_answer": true,
+      "latency_ms": 1641.6,
+      "rounds": 1,
+      "identity_bound": false
+    }
+  ],
+  "execution": {
+    "one_round_samples": 100,
+    "two_round_samples": 0
+  },
+  "category_distribution": {
+    "商品参数": 30,
+    "商品对比": 20,
+    "购买推荐": 15,
+    "售后政策": 15,
+    "订单物流": 10,
+    "边界与投诉": 10
+  },
+  "environment": {
+    "git_commit": "d3a58e30dcf636fc73e8c674a0b299c2def31f56",
+    "llm_provider": "deepseek",
+    "llm_model": "deepseek-chat",
+    "embedding_provider": "mock",
+    "embedding_model": "mock-hash-v1",
+    "embedding_dim": 1024,
+    "database_name": "phone_commerce_eval",
+    "alembic_revision": "8fcb26067dd1",
+    "run_at_utc": "2026-09-10T04:47:05.167168+00:00",
+    "eval_set_hash": "88836ef225fbc0bb6c6f3dfc49eaf7d4c064125580ad00eed4577136883adff2",
+    "eval_scope": "full",
+    "eval_item_ids": "all",
+    "eval_slice_hash": "e28f368d8fa2aa8dc60b09bf5a691a16f559c7635f03d39240f62c28f53cccbf"
+  }
+}
