@@ -9,7 +9,7 @@
 [![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL%20%2B%20pgvector-336791)](https://www.postgresql.org)
 [![Alembic](https://img.shields.io/badge/Migrations-Alembic-orange)](https://alembic.sqlalchemy.org/)
 
-> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 47 个测试 → 100 条 Mock 评测 → 报告归档」；新增用例已在本地通过，远程徽章仍对应当前 `origin/main` 的最近成功运行。
+> **CI 状态**：GitHub Actions 每次 push/PR 自动跑「迁移 → 种子 → 测试 → 100 条 Mock 评测 → 报告归档」；当前本地回归为 48 passed / 3 skipped，远程徽章对应 `origin/main` 的最近运行。
 
 ---
 
@@ -165,7 +165,7 @@ phone-commerce-agent/
 │   │   └── services/        # seed / kb 同步、数据库 bootstrap
 │   ├── alembic/             # 迁移版本
 │   ├── eval/                # 评测引擎（独立库、身份映射、报告）
-│   ├── tests/               # 47 个通过测试 + 3 个按环境跳过的数据库集成测试
+│   ├── tests/               # 当前本地 48 个通过测试 + 3 个按环境跳过的数据库集成测试
 │   └── scripts/             # bootstrap.py / init_db.py
 ├── frontend/                # Vite + React + TS 三端 UI
 ├── data/
@@ -211,18 +211,21 @@ docker compose exec api python scripts/bootstrap.py
 ```bash
 # .env 切换真实模式
 LLM_PROVIDER=deepseek
-DEEPSEEK_API_KEY=sk-xxxx
+DEEPSEEK_API_KEY=<your-deepseek-api-key>
 EMBEDDING_PROVIDER=openai
-EMBEDDING_BASE_URL=http://embedding:8080
+EMBEDDING_BASE_URL=http://host.docker.internal:11434
 EMBEDDING_MODEL=bge-m3
+EMBEDDING_DIM=1024
 ```
+
+上例使用宿主机 Ollama；若使用 Compose 内的 TEI 服务，将 `EMBEDDING_BASE_URL` 改为该服务的容器地址。Embedding 配置变化会进入知识文档版本签名，重新执行 `bootstrap.py` 会幂等重建向量。
 
 ---
 
 ## 🧪 测试与评测
 
 ```bash
-# 单元测试 + 集成测试（47 个通过，3 个数据库集成测试按环境跳过）
+# 单元测试 + 集成测试（当前本地 48 个通过，3 个数据库集成测试按环境跳过）
 cd backend && python -m pytest -q
 
 # 自动化评测（100 条，Mock 模式离线可跑）
@@ -235,22 +238,22 @@ cd backend && python -m eval.run_eval --job-slice
 ALEMBIC_DATABASE_URL=... BOOTSTRAP_TEST_DATABASE_URL=... python -m pytest -q
 ```
 
-### 当前指标（Mock CI 基线 vs DeepSeek 全量真实评测）
+### 当前指标（Mock CI 基线 vs DeepSeek + BGE-M3 全量真实评测）
 
-数据来源：Mock 为 CI Run [#34005144560](https://github.com/shimianye/talk/actions/runs/34005144560) 的 100 条全量评测；真实模型为 [DeepSeek 全量 100 条报告](backend/eval/reports/eval-20260910044705.md)。两者均运行在独立评测库 `phone_commerce_eval`。
+数据来源：Mock 为 CI Run [#34005144560](https://github.com/shimianye/talk/actions/runs/34005144560) 的 100 条全量评测；真实栈为 [DeepSeek + BGE-M3 全量 100 条报告](backend/eval/reports/eval-20260910053147.md)。两者均运行在独立评测库 `phone_commerce_eval`；真实报告指纹记录 `deepseek-chat`、`bge-m3`、1024 维和固定评测集哈希。
 
-| 指标 | 口径 | Mock 基线（100 条） | DeepSeek `deepseek-chat`（100 条） |
+| 指标 | 口径 | Mock 基线（100 条） | DeepSeek + BGE-M3（100 条） |
 |------|------|--------------------|-----------------------------------|
-| 意图准确率 | `state["intent"]` == 期望意图 | **0.4300**（43/100） | **0.8500**（85/100） |
+| 意图准确率 | `state["intent"]` == 期望意图 | **0.4300**（43/100） | **0.8400**（84/100） |
 | 工具选择准确率 | 实际调用工具包含期望工具；只统计有期望工具样本 | **0.2222**（2/9） | **0.2222**（2/9） |
-| 转人工准确率 | 触发 `handoff_required` / 应转人工样本 | **0.4000**（2/5） | **0.4000**（2/5） |
-| 拒答/拦截率 | `blocked` 或 `handoff` / 应拒答或转人工样本 | **0.3333**（2/6） | **0.3333**（2/6） |
+| 转人工准确率 | 触发 `handoff_required` / 应转人工样本 | **0.4000**（2/5） | **0.2000**（1/5） |
+| 拒答/拦截率 | `blocked` 或 `handoff` / 应拒答或转人工样本 | **0.3333**（2/6） | **0.1667**（1/6） |
 | 答案产出率 | 生成非空 `final_answer` | **1.0000**（100/100） | **1.0000**（100/100） |
-| P50 / P95 延迟 | 单条 Agent 端到端耗时 | **4.4 ms / 13.9 ms** | **3482.0 ms / 6397.4 ms** |
+| P50 / P95 延迟 | 单条 Agent 端到端耗时 | **4.4 ms / 13.9 ms** | **4579.1 ms / 10140.4 ms** |
 
-**Owner 越权隔离**（独立探针，不走 LLM）：owner 查询通过 1/1，非 owner 拦截 1/1，混合错误 0。
+**Owner 越权隔离**：本轮含 7 条身份绑定样本；独立探针中 owner 查询通过 1/1、non-owner 拦截 1/1、混合错误 0。
 
-> **怎么读这些数字**：Mock 用来证明链路确定性，DeepSeek 全量评测观察真实模型的意图、工具和安全路由行为。真实模型显著改善意图识别，但没有改善工具、转人工和拒答指标，说明瓶颈已从语义识别转向动作映射与确定性安全规则。此前固定 24 条切片的转人工 4/5、拒答 4/6 明显高于全量结果，因此只保留为[小样本历史报告](backend/eval/reports/eval-20260909133915.md)，不再代表整体能力。本轮 Embedding 仍为 `mock-hash-v1`；答案产出率只表示“有输出”，不等于答案事实正确率。
+> **怎么读这些数字**：Mock 用来证明链路确定性；真实栈报告证明 DeepSeek Agent 与本地 BGE-M3 向量服务在 100 条固定样本上端到端执行，主库和评测库均已重建为 87 个 `bge-m3:1024` 向量。表中准确率仍是意图、工具、转人工和安全路由指标，**不是 Embedding 检索正确率**；当前数据集没有 `relevant_document_ids` 人工标注，因此不宣称 Recall@K、MRR 或 nDCG。真实运行的工具与安全指标仍低，下一步应先做确定性动作映射；答案产出率也只表示“有输出”，不等于事实正确。
 
 ---
 
