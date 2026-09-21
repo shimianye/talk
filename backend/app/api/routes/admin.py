@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_role
@@ -189,6 +189,51 @@ async def list_traces(
         await db.execute(select(AgentTrace).order_by(AgentTrace.id.desc()).limit(100))
     ).scalars().all()
     return {"traces": [serialize(t) for t in traces]}
+
+
+@router.get("/metrics")
+async def operational_metrics(
+    user: User = Depends(require_role("supervisor", "admin")),
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Return aggregate operational metrics for the supervisor dashboard.
+
+    Only counts and latency aggregates are returned.  Conversation content,
+    customer identifiers and SQL-like trace payloads stay behind the existing
+    conversation and trace endpoints.
+    """
+    conversation_count = await db.scalar(select(func.count()).select_from(Conversation))
+    open_count = await db.scalar(
+        select(func.count()).select_from(Conversation).where(Conversation.status == "open")
+    )
+    pending_human_count = await db.scalar(
+        select(func.count())
+        .select_from(Conversation)
+        .where(Conversation.handoff_required.is_(True))
+    )
+    trace_count = await db.scalar(select(func.count()).select_from(AgentTrace))
+    error_count = await db.scalar(
+        select(func.count()).select_from(AgentTrace).where(AgentTrace.error.is_not(None))
+    )
+    handoff_count = await db.scalar(
+        select(func.count())
+        .select_from(AgentTrace)
+        .where(AgentTrace.handoff_required.is_(True))
+    )
+    avg_latency = await db.scalar(select(func.avg(AgentTrace.latency_ms)))
+    return {
+        "conversations": {
+            "total": int(conversation_count or 0),
+            "open": int(open_count or 0),
+            "pending_human": int(pending_human_count or 0),
+        },
+        "traces": {
+            "total": int(trace_count or 0),
+            "errors": int(error_count or 0),
+            "handoffs": int(handoff_count or 0),
+            "average_latency_ms": round(float(avg_latency), 2) if avg_latency is not None else None,
+        },
+    }
 
 
 @router.get("/audit")

@@ -20,6 +20,7 @@
 - **消费者端**：商品咨询、参数对比、购买推荐、订单物流查询、售后申请。
 - **客服工作台**：人工接管、工单处理、内部备注、执行轨迹查看。
 - **管理端**：商品、知识库、用户权限、评测与审计管理。
+- **运营指标**：主管/管理员可查看会话总量、待人工会话、Trace 错误、转人工次数和平均延迟等聚合指标；接口不返回会话正文或用户标识。
 - **可复现**：Docker Compose 一键启动；无 Key 时用 Mock LLM 跑通全链路。
 - **可验证**：结构变更走 Alembic 版本管理，测试与评测接入 GitHub Actions，评测报告带环境指纹可追溯。
 - **可解释**：消费者可展开查看本轮意图、实际工具、知识来源和安全状态；只展示审计事实，不暴露内部 Prompt、参数、业务数据或思维过程。
@@ -157,7 +158,7 @@ flowchart TB
 phone-commerce-agent/
 ├── backend/
 │   ├── app/
-│   │   ├── api/routes/      # 19 条路由（auth/chat/session/admin/eval/health）
+│   │   ├── api/routes/      # 20 条路由（auth/chat/session/admin/eval/health）
 │   │   ├── core/            # llm / tools / agent / rag / security
 │   │   ├── db/              # SQLAlchemy 异步会话
 │   │   ├── models/          # 24 张业务表 ORM
