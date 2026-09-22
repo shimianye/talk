@@ -18,6 +18,7 @@ from app.core.llm.factory import get_llm_client
 from app.core.security import guardrails
 from app.core.tools import registry
 from app.core.tools.base import ToolContext
+from app.core.agent.routing import candidate_tools_for_intent, should_handoff
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,7 @@ async def _extract_intent(state: AgentState) -> None:
         state["intent"] = parsed.get("intent") or "unknown"
         state["entities"] = parsed.get("entities") or {}
         state["plan"] = parsed.get("plan") or []
+        state["intent_confidence"] = parsed.get("confidence")
     except Exception:  # noqa: BLE001
         state.setdefault("intent", "unknown")
         state.setdefault("entities", {})
@@ -127,6 +129,13 @@ async def agent_decision(state: AgentState) -> AgentState:
     if state.get("intent") is None:
         await _extract_intent(state)
 
+    text = _last_user_text(state)
+    if should_handoff(text=text, intent=state.get("intent"), intent_confidence=state.get("intent_confidence")):
+        state["handoff_required"] = True
+        state["routing_decision"] = {"intent": state.get("intent"), "selected_tool": "transfer_to_human", "validation_status": "handoff_policy"}
+        state["final_answer"] = "已为您转接人工客服，请稍候。"
+        return state
+
     # 执行限制：超步数 / 超工具数 → 降级转人工
     if (
         state["steps"] > settings.max_agent_steps
@@ -138,7 +147,10 @@ async def agent_decision(state: AgentState) -> AgentState:
         return state
 
     llm = get_llm_client()
-    tools = registry.to_openai_tools(state.get("role", "consumer"))
+    all_tools = registry.for_role(state.get("role", "consumer"))
+    state["candidate_tools"] = candidate_tools_for_intent(state.get("intent"), (tool.name for tool in all_tools))
+    tools = [tool.to_openai_tool() for tool in all_tools if tool.name in state["candidate_tools"]]
+    state["routing_decision"] = {"intent": state.get("intent"), "candidate_tools": state["candidate_tools"], "validation_status": "validated"}
     try:
         resp = await llm.complete(state["messages"], tools=tools)
     except LLMUnavailableError:
@@ -154,6 +166,9 @@ async def agent_decision(state: AgentState) -> AgentState:
         ]
         state["messages"].append(_assistant_tool_call_message(tcs))
         state["tool_calls"] = tcs
+        state["routing_decision"]["selected_tool"] = tcs[0]["name"] if tcs else None
+        state["routing_decision"]["arguments"] = tcs[0]["arguments"] if tcs else {}
+        state["routing_decision"]["execution_status"] = "pending"
         state["final_answer"] = None
     else:
         state["tool_calls"] = []
@@ -206,6 +221,8 @@ async def tool_execution(state: AgentState) -> AgentState:
             _tool_result_message(tc["id"], json.dumps(result.to_dict(), ensure_ascii=False))
         )
         state["total_tool_calls"] = state.get("total_tool_calls", 0) + 1
+        if state.get("routing_decision", {}).get("selected_tool") == tc["name"]:
+            state["routing_decision"]["execution_status"] = "success" if result.success else "failed"
 
     state["tool_results"] = state.get("tool_results", []) + results
     state["tool_calls"] = []

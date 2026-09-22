@@ -21,6 +21,8 @@ class AgentState(TypedDict, total=False):
     intent: str | None  # 标准化意图名，例如 price_query。
     entities: dict[str, Any]  # 从用户问题提取的商品、订单号、预算等实体。
     plan: list[str]  # LLM 给出的高层执行步骤，主要用于 Trace 和评测。
+    candidate_tools: list[str]  # 按意图收敛后的候选工具集合。
+    routing_decision: dict[str, Any]  # 可审计的路由决策与执行状态。
 
     # 工具调用循环
     tool_calls: list[dict[str, Any]]  # 当前等待执行的工具调用。
